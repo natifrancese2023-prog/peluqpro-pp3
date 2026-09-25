@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:controller="controllers.GestionTurnosController"
+            xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            prefHeight="750.0" prefWidth="900.0"
+            stylesheets="@/resource/styles.css">
+
+    <children>
+
+        <!-- Encabezado -->
+        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
+              AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <children>
+                <ImageView fitHeight="86.0" fitWidth="140.0" preserveRatio="true">
+                    <image>
+                        <Image url="@747e63d5-c24e-4b1e-8622-61cde71cd610.png" />
+                    </image>
+                </ImageView>
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="MÓDULO GESTIÓN DE TURNOS" styleClass="label-subsection">
+                            <font>
+                                <Font name="Candara" size="28.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
+            <padding>
+                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
+            </padding>
+        </HBox>
+
+        <!-- Barra superior con botones -->
+        <HBox spacing="10.0" AnchorPane.topAnchor="100.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              prefHeight="50.0" styleClass="toolbar">
+            <children>
+                <Button fx:id="btnAlta" text="REGISTRAR TURNO"
+                        onAction="#cargarSubModulo"
+                        userData="/interface/AltaTurno.fxml"
+                        prefWidth="150.0" styleClass="menu-button" />
+
+                <Button fx:id="btnGestionDiaria" text="AGENDA DIARIA"
+                        onAction="#cargarSubModulo"
+                        userData="/interface/GestionDiaria.fxml"
+                        prefWidth="150.0" styleClass="menu-button" />
+
+            </children>
+            <padding>
+                <Insets top="5.0" right="10.0" bottom="5.0" left="10.0" />
+            </padding>
+        </HBox>
+
+        <!-- Panel de contenido dinámico -->
+        <AnchorPane fx:id="panelContenidoTurnos"
+                    AnchorPane.topAnchor="150.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                    styleClass="content-panel">
+            <children>
+                <Label text="Bienvenido al Módulo de Turnos."
+                       AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0" />
+            </children>
+            <padding>
+                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
+            </padding>
+        </AnchorPane>
+
+    </children>
+</AnchorPane>

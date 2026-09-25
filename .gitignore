@@ -1,0 +1,31 @@
+# Build de Maven
+target/
+
+# Build de IntelliJ / salidas locales
+out/
+*.iml
+.idea/
+
+# Compilados sueltos
+*.class
+
+# Variables de entorno locales (credenciales) — NUNCA versionar
+.env
+*.env.local
+*.env
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Backups de base de datos
+*.dump
+*.backup
+*.bak
+
+# Archivos generados localmente
+*.xlsx
+*.pdf

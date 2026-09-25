@@ -1,0 +1,365 @@
+package controllers;
+
+import claseslogicas.*;
+import dao.*;
+import java.net.URL;
+
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import utilidades.AlertaUtil;
+import service.ClienteService;
+import service.TurnoService;
+
+public class AltaTurnoController implements Initializable {
+
+    // --- Controles FXML Mapeados ---
+    @FXML private ComboBox<String> cbTipoDocumento;
+    @FXML private TextField txtDocumento;
+    @FXML private Label lblNombreCliente;
+    @FXML private ListView<Servicio> lvServicios;
+    @FXML private Label lblDuracionTotal;
+    @FXML private DatePicker dpFecha;
+    @FXML private ComboBox<Empleado> cbEstilista;
+    @FXML private Button btnBuscarDisponibilidad;
+    @FXML private ListView<BloqueDisponible> lvTurnosDisponibles;
+    @FXML private TextArea txtObservaciones;
+    @FXML private Button btnAgendar;
+    @FXML private Button btnBuscarCliente;
+
+    // --- DAOs ---
+    private final ClienteDAO clienteDAO = new ClienteDAO();
+    private final ClienteService clienteService = new ClienteService();
+    private final EmpleadoDAO empleadoDAO = new EmpleadoDAO();
+    private final ServicioDAO servicioDAO = new ServicioDAO();
+    private final TurnoService turnoService = new TurnoService();
+
+    // --- Variables de Estado ---
+    private Cliente clienteActual;
+    private ObservableList<Servicio> serviciosSeleccionados = FXCollections.observableArrayList();
+    private int duracionTotalMinutos = 0;
+    private BloqueDisponible bloqueSeleccionado;
+
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        // Configuraciones iniciales
+        cargarEstilistas();
+        cargarServicios();
+        cargarTiposDocumento();
+
+
+        btnAgendar.setDisable(true);
+        lvTurnosDisponibles.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            bloqueSeleccionado = newVal;
+            btnAgendar.setDisable(newVal == null);
+        });
+
+
+        lvServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+
+        lvServicios.getSelectionModel().getSelectedItems().addListener(
+                (javafx.collections.ListChangeListener.Change<? extends Servicio> change) -> {
+                    recalcularDuracion();
+                });
+
+
+        btnBuscarDisponibilidad.setDisable(true);
+
+
+        dpFecha.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (duracionTotalMinutos > 0) {
+                handleBuscarDisponibilidad(null);
+            }
+        });
+    }
+
+
+    private void cargarTiposDocumento() {
+        try {
+
+            List<String> tipos = clienteDAO.obtenerTiposDocumento();
+            cbTipoDocumento.setItems(FXCollections.observableArrayList(tipos));
+            if (!tipos.isEmpty()) {
+                cbTipoDocumento.getSelectionModel().select(0);
+            }
+        } catch (SQLException e) {
+            AlertaUtil.mostrarAlerta(
+                    AlertType.ERROR,
+                    "Error de BD",
+                    null,
+                    "No se pudieron cargar los tipos de documento: " + e.getMessage()
+            );
+
+        }
+    }
+
+    @FXML
+    private void handleBuscarCliente(ActionEvent event) {
+        String tipoDoc = cbTipoDocumento.getSelectionModel().getSelectedItem();
+        String numDoc = txtDocumento.getText().trim();
+
+        if (tipoDoc == null || numDoc.isEmpty()) {
+            AlertaUtil.mostrarAlerta(
+                    AlertType.WARNING,
+                    "Advertencia",
+                    null,
+                    "Debe seleccionar un tipo y número de documento."
+            );
+
+            return;
+        }
+
+        try {
+            clienteActual = clienteService.buscarPorDocumento(tipoDoc, numDoc);
+
+            if (clienteActual != null) {
+                lblNombreCliente.setText("Cliente: " + clienteActual.getNombreCompleto());
+                lblNombreCliente.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+            } else {
+                lblNombreCliente.setText("Cliente no encontrado. Debe registrarlo primero.");
+                lblNombreCliente.setStyle("-fx-text-fill: red;");
+                clienteActual = null;
+            }
+        } catch (SQLException e) {
+            AlertaUtil.mostrarAlerta(
+                    AlertType.ERROR,
+                    "Error de BD",
+                    null,
+                    "Error al buscar cliente: " + e.getMessage()
+            );
+
+        }
+    }
+
+
+    private void cargarServicios() {
+        List<Servicio> todosServicios = servicioDAO.obtenerTodos();
+        lvServicios.setItems(FXCollections.observableArrayList(todosServicios));
+
+        lvServicios.setCellFactory(lv -> new ListCell<Servicio>() {
+            @Override
+            protected void updateItem(Servicio item, boolean empty) {
+                super.updateItem(item, empty);
+
+                setText(empty ? null : item.getNombreConDuracion());
+            }
+        });
+    }
+
+    private void recalcularDuracion() {
+
+        serviciosSeleccionados.setAll(lvServicios.getSelectionModel().getSelectedItems());
+
+
+        duracionTotalMinutos = serviciosSeleccionados.stream()
+                .mapToInt(Servicio::getDuracionMinutos)
+                .sum();
+
+        lblDuracionTotal.setText("Duración Total Requerida: " + duracionTotalMinutos + " minutos.");
+
+        btnBuscarDisponibilidad.setDisable(duracionTotalMinutos == 0);
+
+
+        if (dpFecha.getValue() != null && duracionTotalMinutos > 0) {
+            handleBuscarDisponibilidad(null);
+        }
+    }
+
+
+    private void cargarEstilistas() {
+        try {
+
+            List<Empleado> estilistas = empleadoDAO.obtenerEstilistas();
+            System.out.println("🔍 Estilistas encontrados: " + estilistas.size());
+
+            if (estilistas.isEmpty()) {
+                System.out.println("⚠️ No se encontraron estilistas en la base de datos.");
+                AlertaUtil.mostrarAlerta(
+                        Alert.AlertType.WARNING,
+                        "Sin estilistas",
+                        null,
+                        "No hay estilistas registrados."
+                );
+
+            } else {
+                cbEstilista.setItems(FXCollections.observableArrayList(estilistas));
+                System.out.println("✅ ComboBox cargado con estilistas.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // ✅ muestra el error completo
+            AlertaUtil.mostrarAlerta(
+                    Alert.AlertType.ERROR,
+                    "Error",
+                    null,
+                    "No se pudo cargar los estilistas: " + e.getMessage()
+            );
+
+        }
+    }
+
+
+
+
+    @FXML
+    private void handleBuscarDisponibilidad(ActionEvent event) {
+        if (clienteActual == null || duracionTotalMinutos <= 0 || dpFecha.getValue() == null) {
+            lvTurnosDisponibles.getItems().clear();
+            if (event != null) {
+                AlertaUtil.mostrarAlerta(
+                        AlertType.WARNING,
+                        "Advertencia",
+                        null,
+                        "Debe completar Cliente, Servicios y Fecha."
+                );
+
+            }
+            return;
+        }
+
+        LocalDate fecha = dpFecha.getValue();
+        Empleado estilistaSeleccionado = cbEstilista.getValue();
+
+
+        if (estilistaSeleccionado == null) {
+            AlertaUtil.mostrarAlerta(
+                    AlertType.WARNING,
+                    "Estilista no seleccionado",
+                    null,
+                    "Debe seleccionar un estilista antes de buscar disponibilidad."
+            );
+
+            return;
+        }
+
+        Integer idEstilista = (estilistaSeleccionado.getIdEmpleado() == 0) ? null : estilistaSeleccionado.getIdEmpleado();
+
+
+        try {
+            System.out.println("DEBUG: Duración enviada: " + duracionTotalMinutos + " minutos. Fecha: " + fecha);
+            List<BloqueDisponible> disponibles = turnoService.buscarDisponibilidad(fecha, duracionTotalMinutos, idEstilista);
+
+            lvTurnosDisponibles.setItems(FXCollections.observableArrayList(disponibles));
+
+            lvTurnosDisponibles.setCellFactory(lv -> new ListCell<BloqueDisponible>() {
+                @Override
+                protected void updateItem(BloqueDisponible item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty ? null : item.getResumenBloque());
+                }
+            });
+
+            if (disponibles.isEmpty()) {
+                AlertaUtil.mostrarAlerta(
+                        AlertType.INFORMATION,
+                        "Información",
+                        null,
+                        "No se encontraron turnos disponibles con esos criterios."
+                );
+
+            }
+
+        } catch (SQLException e) {
+            AlertaUtil.mostrarAlerta(
+                    AlertType.ERROR,
+                    "Error de BD",
+                    null,
+                    "Error al buscar disponibilidad: " + e.getMessage()
+            );
+
+        }
+    }
+
+
+    @FXML
+    private void handleAgendarTurno(ActionEvent event) {
+        if (bloqueSeleccionado == null || clienteActual == null || serviciosSeleccionados.isEmpty())
+        {
+            AlertaUtil.mostrarAlerta(
+                    AlertType.ERROR,
+                    "Error",
+                    null,
+                    "Debe seleccionar un cliente, servicios y un turno disponible."
+            );
+
+            return;
+        }
+
+        // 1. Construir el objeto Turno
+        Turno nuevoTurno = new Turno();
+        nuevoTurno.setIdCliente(clienteActual.getIdCliente()); // ✅
+
+        // Usamos getIdPersona() que es el id_empleado
+        nuevoTurno.setIdEmpleado(bloqueSeleccionado.getEstilista().getIdEmpleado()); // ✅
+
+        nuevoTurno.setFecha(dpFecha.getValue());
+        nuevoTurno.setHoraInicio(bloqueSeleccionado.getHoraInicio());
+        nuevoTurno.setHoraFin(bloqueSeleccionado.getHoraFin());
+        nuevoTurno.setServicios(new ArrayList<>(serviciosSeleccionados));
+        nuevoTurno.setObservaciones(txtObservaciones.getText());
+
+        try {
+            // 2. Ejecutar la transacción de inserción (el estado inicial
+            // PENDIENTE lo asigna TurnoService.registrarTurno)
+            boolean exito = turnoService.registrarTurno(nuevoTurno);
+
+            if (exito) {
+                AlertaUtil.mostrarAlerta(
+                        AlertType.INFORMATION,
+                        "Éxito",
+                        null,
+                        "Turno agendado exitosamente para " + clienteActual.getNombreCompleto() + "."
+                );
+
+
+                limpiarFormulario();
+            }
+        } catch (SQLException e) {
+            AlertaUtil.mostrarAlerta(
+                    AlertType.ERROR,
+                    "Error de Agenda",
+                    null,
+                    "Fallo al agendar el turno. Detalle: " + e.getMessage()
+            );
+
+        }
+    }
+
+
+    @FXML
+    private void handleCancelar(ActionEvent event) {
+        limpiarFormulario();
+    }
+
+
+
+    private void limpiarFormulario() {
+        txtDocumento.clear();
+        lblNombreCliente.setText("Cliente: N/A");
+        lblNombreCliente.setStyle("-fx-text-fill: black;");
+        lvServicios.getSelectionModel().clearSelection();
+        recalcularDuracion();
+        lvTurnosDisponibles.getItems().clear();
+        txtObservaciones.clear();
+        if (!cbEstilista.getItems().isEmpty()) {
+            cbEstilista.getSelectionModel().select(0);
+        } else {
+            cbEstilista.getSelectionModel().clearSelection();
+        }
+        dpFecha.setValue(null);
+        clienteActual = null;
+        bloqueSeleccionado = null;
+        btnAgendar.setDisable(true);
+    }
+
+}
