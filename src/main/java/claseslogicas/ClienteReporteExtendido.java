@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 public class ClienteReporteExtendido {
     private int idPersona;
+    private int idCliente;
     private String nombreCompleto;
     private String telefono;
     private String email;
@@ -15,10 +16,11 @@ public class ClienteReporteExtendido {
     private String estadoUltimoTurno;
     private String redesSociales;
 
-    public ClienteReporteExtendido(int idPersona, String nombreCompleto, String telefono, String email,
+    public ClienteReporteExtendido(int idPersona, int idCliente, String nombreCompleto, String telefono, String email,
                                    String direccion, LocalDate fechaAlta, int cantidadVisitas,
                                    BigDecimal gastoTotal, String estadoUltimoTurno, String redesSociales) {
         this.idPersona = idPersona;
+        this.idCliente = idCliente;
         this.nombreCompleto = nombreCompleto;
         this.telefono = telefono;
         this.email = email;
@@ -32,6 +34,7 @@ public class ClienteReporteExtendido {
 
 
     public int getIdPersona() { return idPersona; }
+    public int getIdCliente() { return idCliente; }
     public String getNombreCompleto() { return nombreCompleto; }
     public String getTelefono() { return telefono; }
     public String getEmail() { return email; }

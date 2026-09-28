@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import claseslogicas.FacturaReporteDetalle;
 import java.math.BigDecimal;
 
 import org.slf4j.Logger;
@@ -183,6 +185,50 @@ public class ReporteFacturacionDAO {
             );
         }
 
+        return resultados;
+    }
+
+    /**
+     * Obtiene el detalle de facturación del período, incluyendo cliente, fecha,
+     * monto y forma de pago. Se consideran las facturas Facturada y Pagada,
+     * igual que los demás cálculos de este reporte.
+     */
+    public List<FacturaReporteDetalle> obtenerDetalleFacturacion(LocalDate inicio, LocalDate fin) {
+        List<FacturaReporteDetalle> resultados = new ArrayList<>();
+        String sql = "SELECT CONCAT(p.nombre, ' ', p.apellido) AS cliente, " +
+                "f.fecha_hora, f.total, COALESCE(mp.nombre_metodo, 'Sin especificar') AS forma_pago, " +
+                "ef.nombre AS estado_factura " +
+                "FROM factura f " +
+                "JOIN cliente c ON f.id_cliente = c.id_cliente " +
+                "JOIN persona p ON c.id_persona = p.id_persona " +
+                "LEFT JOIN metodo_pago mp ON f.id_metodo = mp.id_metodo " +
+                "JOIN estado_factura ef ON f.id_estado_factura = ef.id_estado_factura " +
+                "WHERE f.fecha_hora >= ? AND f.fecha_hora < ? " +
+                "AND f.id_estado_factura IN (?, ?) " +
+                "ORDER BY f.fecha_hora, cliente";
+
+        try (Connection conn = ConexionBD.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setTimestamp(1, java.sql.Timestamp.valueOf(inicio.atStartOfDay()));
+            stmt.setTimestamp(2, java.sql.Timestamp.valueOf(fin.plusDays(1).atStartOfDay()));
+            stmt.setInt(3, ID_ESTADO_FACTURADA);
+            stmt.setInt(4, ID_ESTADO_PAGADA);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    java.sql.Timestamp timestamp = rs.getTimestamp("fecha_hora");
+                    resultados.add(new FacturaReporteDetalle(
+                            rs.getString("cliente"),
+                            timestamp != null ? timestamp.toLocalDateTime() : null,
+                            rs.getBigDecimal("total"),
+                            rs.getString("forma_pago"),
+                            rs.getString("estado_factura")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            log.error("Error al obtener detalle de facturación entre {} y {}", inicio, fin, e);
+        }
         return resultados;
     }
 

@@ -20,6 +20,7 @@ public class ReporteDAO {
         String sql = """
             SELECT
                 p.id_persona,
+                c.id_cliente,
                 CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo,
                 p.telefono,
                 p.email,
@@ -70,6 +71,7 @@ public class ReporteDAO {
 
                     ClienteReporteExtendido cliente = new ClienteReporteExtendido(
                             rs.getInt("id_persona"),
+                            rs.getInt("id_cliente"),
                             rs.getString("nombre_completo"),
                             rs.getString("telefono"),
                             rs.getString("email"),
@@ -92,4 +94,39 @@ public class ReporteDAO {
 
         return lista;
     }
+    /**
+     * Obtiene el ticket promedio de un cliente para el período indicado.
+     * Las facturas anuladas no forman parte del cálculo.
+     * Devuelve null cuando no existen facturas en el período.
+     */
+    public java.math.BigDecimal obtenerTicketPromedioCliente(int idCliente, LocalDate desde, LocalDate hasta) throws SQLException {
+        String sql = "SELECT SUM(total) AS total, COUNT(*) AS cantidad " +
+                "FROM factura " +
+                "WHERE id_cliente = ? " +
+                "AND fecha_hora >= ? " +
+                "AND fecha_hora < ? " +
+                "AND id_estado_factura IN (?, ?)";
+
+        try (Connection conn = ConexionBD.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idCliente);
+            ps.setTimestamp(2, Timestamp.valueOf(desde.atStartOfDay()));
+            ps.setTimestamp(3, Timestamp.valueOf(hasta.plusDays(1).atStartOfDay()));
+            ps.setInt(4, EstadoFactura.FACTURADA.getIdEstadoFactura());
+            ps.setInt(5, EstadoFactura.PAGADA.getIdEstadoFactura());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int cantidad = rs.getInt("cantidad");
+                    if (cantidad == 0) {
+                        return null;
+                    }
+                    java.math.BigDecimal total = rs.getBigDecimal("total");
+                    return total.divide(java.math.BigDecimal.valueOf(cantidad), 2, java.math.RoundingMode.HALF_UP);
+                }
+            }
+        }
+        return null;
+    }
+
 }

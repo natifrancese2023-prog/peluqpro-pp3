@@ -9,6 +9,8 @@ import javafx.collections.ObservableList;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.math.RoundingMode;
 
 public class ExportadorPDF implements ExportadorReporte {
@@ -32,7 +34,7 @@ public class ExportadorPDF implements ExportadorReporte {
         documento.add(new Paragraph("Dirección: Av. Central 123, Laguna Larga"));
         documento.add(new Paragraph("Teléfono: 03572-400000"));
         documento.add(new Paragraph("Email: contacto@peluqpro.com"));
-        documento.add(new Paragraph("Fecha de generación: " + LocalDate.now()));
+        documento.add(new Paragraph("Fecha y hora de generación: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))));
         documento.add(new Paragraph(" "));
     }
 
@@ -133,6 +135,39 @@ public class ExportadorPDF implements ExportadorReporte {
                             fr.getDebito()
                     )
             );
+        }
+
+        documento.add(tabla);
+        documento.close();
+    }
+
+
+    /** Exportación detallada utilizada por HU17. */
+    public void exportarFacturasDetalleReporte(ObservableList<FacturaReporteDetalle> facturas, File destino) throws Exception {
+        Document documento = new Document();
+        PdfWriter.getInstance(documento, new FileOutputStream(destino));
+        documento.open();
+
+        agregarEncabezadoInstitucional(documento);
+        documento.add(new Paragraph("Reporte de Facturación por Período",
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14)));
+        documento.add(new Paragraph(" "));
+
+        PdfPTable tabla = new PdfPTable(4);
+        tabla.setWidthPercentage(100);
+        for (String header : new String[]{"Cliente", "Fecha", "Monto", "Forma de pago"}) {
+            PdfPCell cell = new PdfPCell(new Phrase(header,
+                    FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10)));
+            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            tabla.addCell(cell);
+        }
+
+        for (FacturaReporteDetalle factura : facturas) {
+            tabla.addCell(factura.getCliente());
+            tabla.addCell(factura.getFechaHora() == null ? "-" :
+                    factura.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+            tabla.addCell(String.format("$ %.2f", factura.getMonto()));
+            tabla.addCell(factura.getFormaPago());
         }
 
         documento.add(tabla);

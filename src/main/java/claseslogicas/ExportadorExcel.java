@@ -16,6 +16,8 @@ import java.sql.Timestamp;
 import java.sql.Time;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,7 +61,7 @@ public class ExportadorExcel implements ExportadorReporte {
             hoja.createRow(1).createCell(0).setCellValue("Dirección: Av. Central 123, Laguna Larga");
             hoja.createRow(2).createCell(0).setCellValue("Teléfono: 03572-400000");
             hoja.createRow(3).createCell(0).setCellValue("Email: contacto@peluqpro.com");
-            hoja.createRow(4).createCell(0).setCellValue("Fecha de generación: " + LocalDate.now());
+            hoja.createRow(4).createCell(0).setCellValue("Fecha y hora de generación: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
             Row encabezado = hoja.createRow(6);
             String[] columnas = {"Nombre", "Email", "Visitas", "Gasto total", "Estado último turno"};
@@ -89,7 +91,7 @@ public class ExportadorExcel implements ExportadorReporte {
             Sheet hoja = workbook.createSheet("Reporte de Facturación");
 
             hoja.createRow(0).createCell(0).setCellValue("PeluqPro");
-            hoja.createRow(1).createCell(0).setCellValue("Fecha de generación: " + LocalDate.now());
+            hoja.createRow(1).createCell(0).setCellValue("Fecha y hora de generación: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
             Row encabezado = hoja.createRow(3);
             String[] columnas = {
@@ -137,6 +139,42 @@ public class ExportadorExcel implements ExportadorReporte {
         }
     }
 
+
+    /** Exportación detallada utilizada por HU17. */
+    public void exportarFacturasDetalleReporte(ObservableList<FacturaReporteDetalle> facturas, File destino) throws Exception {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet hoja = workbook.createSheet("Reporte de Facturación");
+
+            hoja.createRow(0).createCell(0).setCellValue("PeluqPro");
+            hoja.createRow(1).createCell(0).setCellValue("Fecha y hora de generación: " +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+
+            Row encabezado = hoja.createRow(3);
+            String[] columnas = {"Cliente", "Fecha", "Monto", "Forma de pago"};
+            for (int i = 0; i < columnas.length; i++) {
+                encabezado.createCell(i).setCellValue(columnas[i]);
+            }
+
+            int filaActual = 4;
+            for (FacturaReporteDetalle factura : facturas) {
+                Row fila = hoja.createRow(filaActual++);
+                fila.createCell(0).setCellValue(factura.getCliente());
+                fila.createCell(1).setCellValue(factura.getFechaHora() == null ? "-" :
+                        factura.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                fila.createCell(2).setCellValue(factura.getMonto().doubleValue());
+                fila.createCell(3).setCellValue(factura.getFormaPago());
+            }
+
+            hoja.createFreezePane(0, 4);
+            for (int i = 0; i < columnas.length; i++) {
+                hoja.autoSizeColumn(i);
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(destino)) {
+                workbook.write(fos);
+            }
+        }
+    }
 
     public  void exportarTodo(File destino) throws Exception {
         if (destino == null) {

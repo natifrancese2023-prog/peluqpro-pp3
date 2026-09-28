@@ -1,11 +1,14 @@
 package controllers;
 
+import claseslogicas.Cliente;
 import claseslogicas.ClienteReporteExtendido;
+import claseslogicas.HistorialView;
+import claseslogicas.ExportadorExcel;
+import claseslogicas.ExportadorPDF;
 import dao.ReporteDAO;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
@@ -14,7 +17,9 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
-import javafx.event.ActionEvent;
+import service.ClienteService;
+import service.ReporteService;
+import service.VisitaService;
 import utilidades.AlertaUtil;
 
 import javax.imageio.ImageIO;
@@ -24,78 +29,163 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import claseslogicas.ExportadorExcel;
-import claseslogicas.ExportadorPDF;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReporteClienteController {
 
+    @FXML private ComboBox<Cliente> cbCliente;
+    @FXML private DatePicker fechaDesdeCliente;
+    @FXML private DatePicker fechaHastaCliente;
+    @FXML private Button btnConsultarCliente;
+    @FXML private Label lblTicketPromedio;
+
+    @FXML private TableView<HistorialView> tablaServiciosCliente;
+    @FXML private TableColumn<HistorialView, String> colFechaServicio;
+    @FXML private TableColumn<HistorialView, String> colServicioCliente;
+    @FXML private TableColumn<HistorialView, String> colEstilistaCliente;
+    @FXML private TableColumn<HistorialView, String> colObservacionesCliente;
+
     @FXML private TableView<ClienteReporteExtendido> tablaClientes;
     @FXML private TableColumn<ClienteReporteExtendido, String> colNombre;
     @FXML private TableColumn<ClienteReporteExtendido, String> colTelefono;
     @FXML private TableColumn<ClienteReporteExtendido, String> colEmail;
     @FXML private TableColumn<ClienteReporteExtendido, Integer> colVisitas;
-    @FXML private TableColumn<ClienteReporteExtendido, java.math.BigDecimal> colGasto;
+    @FXML private TableColumn<ClienteReporteExtendido, BigDecimal> colGasto;
     @FXML private TableColumn<ClienteReporteExtendido, String> colEstadoTurno;
 
     @FXML private ComboBox<String> cbFiltro;
-
-
     @FXML private BarChart<String, Number> graficoBarras;
     @FXML private PieChart graficoTorta;
     @FXML private BarChart<String, Number> graficoHistograma;
 
     private final ReporteDAO reporteDAO = new ReporteDAO();
+    private final ReporteService reporteService = new ReporteService();
+    private final ClienteService clienteService = new ClienteService();
+    private final VisitaService visitaService = new VisitaService();
     private List<ClienteReporteExtendido> datosClientes;
+
+    private static final DateTimeFormatter FORMATO_FECHA_HORA =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public void initialize() {
         configurarTitulosGraficos();
         configurarTabla();
         configurarFiltro();
+        configurarConsultaPorCliente();
+        cargarClientesParaConsulta();
         cargarDatosClientes();
     }
 
-    private void configurarTitulosGraficos() {
+    private void configurarConsultaPorCliente() {
+        cbCliente.setConverter(new javafx.util.StringConverter<>() {
+            @Override
+            public String toString(Cliente cliente) {
+                return cliente == null ? "" : (cliente.getPersona() != null ? cliente.getPersona().getNombre() + " " + cliente.getPersona().getApellido() : cliente.getNombreCompleto());
+            }
 
+            @Override
+            public Cliente fromString(String string) {
+                return null;
+            }
+        });
+
+        colFechaServicio.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getFechaHora() == null
+                        ? "-"
+                        : data.getValue().getFechaHora().format(FORMATO_FECHA_HORA)));
+        colServicioCliente.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getNombreServicio() != null ? data.getValue().getNombreServicio() : "-"));
+        colEstilistaCliente.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getNombreEstilista() != null ? data.getValue().getNombreEstilista() : "-"));
+        colObservacionesCliente.setCellValueFactory(data -> new SimpleStringProperty(
+                data.getValue().getObservaciones() != null ? data.getValue().getObservaciones() : "-"));
+    }
+
+    private String nombreCliente(Cliente cliente) {
+        if (cliente == null) return "";
+        if (cliente.getPersona() != null) {
+            return ((cliente.getPersona().getNombre() == null ? "" : cliente.getPersona().getNombre()) + " " +
+                    (cliente.getPersona().getApellido() == null ? "" : cliente.getPersona().getApellido())).trim();
+        }
+        return cliente.getNombreCompleto();
+    }
+
+    private void cargarClientesParaConsulta() {
+        try {
+            List<Cliente> clientes = clienteService.obtenerTodos().stream()
+                    .filter(Cliente::isActivo)
+                    .sorted(Comparator.comparing(this::nombreCliente, String.CASE_INSENSITIVE_ORDER))
+                    .collect(Collectors.toList());
+            cbCliente.setItems(FXCollections.observableArrayList(clientes));
+        } catch (Exception e) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error al cargar clientes", null,
+                    "No se pudieron cargar los clientes para la consulta del reporte.");
+        }
+    }
+
+    @FXML
+    private void consultarCliente() {
+        Cliente cliente = cbCliente.getValue();
+        LocalDate desde = fechaDesdeCliente.getValue();
+        LocalDate hasta = fechaHastaCliente.getValue();
+
+        if (cliente == null || desde == null || hasta == null) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.WARNING, "Datos incompletos", null,
+                    "Seleccioná un cliente y el período Desde/Hasta.");
+            return;
+        }
+        if (hasta.isBefore(desde)) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Período inválido", null,
+                    "La fecha Hasta no puede ser anterior a la fecha Desde.");
+            return;
+        }
+
+        List<HistorialView> historial = visitaService.obtenerHistorialPorCliente(cliente.getIdCliente()).stream()
+                .filter(h -> h.getFechaHora() != null
+                        && !h.getFechaHora().toLocalDate().isBefore(desde)
+                        && !h.getFechaHora().toLocalDate().isAfter(hasta))
+                .collect(Collectors.toList());
+
+        BigDecimal ticketPromedio;
+        try {
+            ticketPromedio = reporteService.obtenerTicketPromedioCliente(
+                    cliente.getIdCliente(), desde, hasta);
+        } catch (Exception e) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error al consultar", null,
+                    "No se pudo obtener el ticket promedio del cliente.");
+            return;
+        }
+
+        if (historial.isEmpty() && ticketPromedio == null) {
+            tablaServiciosCliente.setItems(FXCollections.observableArrayList());
+            lblTicketPromedio.setText("Ticket promedio: Sin datos");
+            AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sin resultados", null,
+                    "No se encontraron resultados para el cliente y período seleccionados.");
+            return;
+        }
+
+        tablaServiciosCliente.setItems(FXCollections.observableArrayList(historial));
+        lblTicketPromedio.setText(ticketPromedio == null
+                ? "Ticket promedio: Sin datos"
+                : "Ticket promedio: " + String.format("$%.2f", ticketPromedio));
+    }
+
+    private void configurarTitulosGraficos() {
         graficoBarras.setTitle("Gasto Total por Cliente");
         graficoTorta.setTitle("Distribución de Ingresos por Cliente");
         graficoHistograma.setTitle("Frecuencia de Visitas de Clientes");
-
         graficoBarras.setLegendVisible(false);
         graficoHistograma.setLegendVisible(false);
-
-
-        javafx.scene.chart.CategoryAxis xAxisBarras = (javafx.scene.chart.CategoryAxis) graficoBarras.getXAxis();
-        xAxisBarras.setTickLabelsVisible(true);
-        xAxisBarras.setTickLabelRotation(45);
-        xAxisBarras.setTickLabelFill(javafx.scene.paint.Color.BLACK);
-        javafx.scene.chart.CategoryAxis xAxisHistograma = (javafx.scene.chart.CategoryAxis) graficoHistograma.getXAxis();
-        xAxisHistograma.setTickLabelsVisible(true);
-        xAxisHistograma.setTickLabelRotation(45);
-        xAxisHistograma.setTickLabelFill(javafx.scene.paint.Color.BLACK);
-
-
-        String estiloTextoGraficos =
-                "-fx-text-background-color: #000000; "
-                        + "-fx-mark-highlight-inner: #000000; "
-                        + "-fx-legend-text-fill: #000000;";
-
-        graficoBarras.setStyle(estiloTextoGraficos);
-        graficoTorta.setStyle(estiloTextoGraficos);
-        graficoHistograma.setStyle(estiloTextoGraficos);
-
-
-        graficoBarras.getXAxis().setStyle("-fx-tick-label-fill: #000000; -fx-label-padding: 5;");
-        graficoBarras.getYAxis().setStyle("-fx-tick-label-fill: #000000;");
-        graficoHistograma.getXAxis().setStyle("-fx-tick-label-fill: #000000; -fx-label-padding: 5;");
-        graficoHistograma.getYAxis().setStyle("-fx-tick-label-fill: #000000;");
     }
+
     private void configurarTabla() {
         colNombre.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("nombreCompleto"));
         colTelefono.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("telefono"));
@@ -104,17 +194,11 @@ public class ReporteClienteController {
         colGasto.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("gastoTotal"));
         colEstadoTurno.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("estadoUltimoTurno"));
 
-
         colGasto.setCellFactory(tc -> new TableCell<>() {
             @Override
-            protected void updateItem(java.math.BigDecimal item, boolean empty) {
+            protected void updateItem(BigDecimal item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-
-                    setText(String.format("$%.2f", item.doubleValue()));
-                }
+                setText(empty || item == null ? null : String.format("$%.2f", item.doubleValue()));
             }
         });
     }
@@ -130,14 +214,14 @@ public class ReporteClienteController {
             datosClientes = reporteDAO.obtenerDatosClientesExtendido();
             tablaClientes.setItems(FXCollections.observableArrayList(datosClientes));
             actualizarVisualizacion();
-        } catch (SQLException e) {
-            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error al cargar datos", null, "No se pudieron obtener los datos de clientes.");
-            System.err.println("🧨 Error SQL: " + e.getMessage());
+        } catch (Exception e) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error al cargar datos", null,
+                    "No se pudieron obtener los datos de clientes.");
         }
     }
+
     private void actualizarVisualizacion() {
         String filtro = cbFiltro.getValue();
-
         if (datosClientes == null || datosClientes.isEmpty()) {
             tablaClientes.setItems(FXCollections.observableArrayList());
             graficoBarras.getData().clear();
@@ -147,62 +231,41 @@ public class ReporteClienteController {
         }
 
         List<ClienteReporteExtendido> filtrados;
-
         switch (filtro) {
-
             case "Frecuentes" -> filtrados = datosClientes.stream()
-                    .sorted(
-                            Comparator.comparing(
-                                    ClienteReporteExtendido::getCantidadVisitas,
-                                    Comparator.reverseOrder()
-                            )
-                    )
-                    .limit(5)
-                    .collect(Collectors.toList());
-
+                    .sorted(Comparator.comparing(ClienteReporteExtendido::getCantidadVisitas).reversed())
+                    .limit(5).collect(Collectors.toList());
             case "Mayor gasto" -> filtrados = datosClientes.stream()
-                    .sorted(
-                            Comparator.comparing(
-                                    ClienteReporteExtendido::getGastoTotal,
-                                    Comparator.nullsLast(Comparator.reverseOrder())
-                            )
-                    )
-                    .limit(5)
-                    .collect(Collectors.toList());
-
+                    .sorted(Comparator.comparing(ClienteReporteExtendido::getGastoTotal,
+                            Comparator.nullsLast(Comparator.reverseOrder())))
+                    .limit(5).collect(Collectors.toList());
             default -> filtrados = datosClientes;
         }
 
-        tablaClientes.setItems(
-                FXCollections.observableArrayList(filtrados)
-        );
-
+        tablaClientes.setItems(FXCollections.observableArrayList(filtrados));
         actualizarGraficoBarras(filtrados);
         actualizarGraficoTorta(filtrados);
         actualizarGraficoHistograma(filtrados);
     }
-
 
     private void actualizarGraficoBarras(List<ClienteReporteExtendido> clientes) {
         graficoBarras.getData().clear();
         XYChart.Series<String, Number> serie = new XYChart.Series<>();
         serie.setName("Gasto total por cliente");
         for (ClienteReporteExtendido c : clientes) {
-            double gasto = c.getGastoTotal() != null ? c.getGastoTotal().doubleValue() : 0.0;
-            serie.getData().add(new XYChart.Data<>(c.getNombreCompleto(), gasto));
+            serie.getData().add(new XYChart.Data<>(c.getNombreCompleto(),
+                    c.getGastoTotal() != null ? c.getGastoTotal().doubleValue() : 0));
         }
         graficoBarras.getData().add(serie);
     }
 
-
     private void actualizarGraficoTorta(List<ClienteReporteExtendido> clientes) {
         graficoTorta.getData().clear();
         for (ClienteReporteExtendido c : clientes) {
-            double gasto = c.getGastoTotal() != null ? c.getGastoTotal().doubleValue() : 0.0;
-            graficoTorta.getData().add(new PieChart.Data(c.getNombreCompleto(), gasto));
+            graficoTorta.getData().add(new PieChart.Data(c.getNombreCompleto(),
+                    c.getGastoTotal() != null ? c.getGastoTotal().doubleValue() : 0));
         }
     }
-
 
     private void actualizarGraficoHistograma(List<ClienteReporteExtendido> clientes) {
         graficoHistograma.getData().clear();
@@ -213,58 +276,54 @@ public class ReporteClienteController {
         }
         graficoHistograma.getData().add(serie);
     }
+
     @FXML
     private void exportarPDF(ActionEvent event) {
         if (tablaClientes.getItems().isEmpty()) {
             AlertaUtil.mostrarAlerta(Alert.AlertType.WARNING, "Sin datos", null, "No hay clientes para exportar.");
             return;
         }
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Guardar reporte PDF");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo PDF", "*.pdf"));
+        File archivo = chooser.showSaveDialog(null);
+        if (archivo == null) return;
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Guardar reporte PDF");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo PDF", "*.pdf"));
-        File archivo = fileChooser.showSaveDialog(null);
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(archivo));
+            document.open();
+            new ExportadorPDF().agregarEncabezadoInstitucional(document);
+            document.add(new com.itextpdf.text.Paragraph("Reporte de Clientes",
+                    com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 14)));
+            document.add(new com.itextpdf.text.Paragraph(" "));
 
-        if (archivo != null) {
-            try {
-                Document document = new Document();
-                PdfWriter.getInstance(document, new FileOutputStream(archivo));
-                document.open();
-
-                new ExportadorPDF().agregarEncabezadoInstitucional(document);
-                document.add(new com.itextpdf.text.Paragraph("Reporte de Clientes",
-                        com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 14)));
-                document.add(new com.itextpdf.text.Paragraph(" "));
-
-                PdfPTable table = new PdfPTable(6);
-                table.setWidthPercentage(100);
-                for (String header : new String[]{"Nombre", "Teléfono", "Email", "Visitas", "Gasto acumulado", "Estado último turno"}) {
-                    PdfPCell cell = new PdfPCell(new com.itextpdf.text.Phrase(header,
-                            com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 10)));
-                    cell.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
-                    table.addCell(cell);
-                }
-                for (ClienteReporteExtendido c : tablaClientes.getItems()) {
-                    table.addCell(c.getNombreCompleto());
-                    table.addCell(c.getTelefono() != null ? c.getTelefono() : "-");
-                    table.addCell(c.getEmail() != null ? c.getEmail() : "-");
-                    table.addCell(String.valueOf(c.getCantidadVisitas()));
-                    table.addCell(c.getGastoTotal() != null ? c.getGastoTotal().toString() : "0.00");
-                    table.addCell(c.getEstadoUltimoTurno() != null ? c.getEstadoUltimoTurno() : "-");
-                }
-                document.add(table);
-
-
-                agregarGraficoPDF(document, graficoBarras, "barras.png");
-                agregarGraficoPDF(document, graficoTorta, "torta.png");
-                agregarGraficoPDF(document, graficoHistograma, "histograma.png");
-
-                document.close();
-                AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Exportación exitosa", null, "El reporte fue exportado correctamente a PDF.");
-            } catch (Exception e) {
-                AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error de exportación", null, "Ocurrió un error al generar el archivo PDF.");
-                e.printStackTrace();
+            PdfPTable table = new PdfPTable(6);
+            table.setWidthPercentage(100);
+            for (String header : new String[]{"Nombre", "Teléfono", "Email", "Visitas", "Gasto acumulado", "Estado último turno"}) {
+                PdfPCell cell = new PdfPCell(new com.itextpdf.text.Phrase(header,
+                        com.itextpdf.text.FontFactory.getFont(com.itextpdf.text.FontFactory.HELVETICA_BOLD, 10)));
+                cell.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                table.addCell(cell);
             }
+            for (ClienteReporteExtendido c : tablaClientes.getItems()) {
+                table.addCell(c.getNombreCompleto());
+                table.addCell(c.getTelefono() != null ? c.getTelefono() : "-");
+                table.addCell(c.getEmail() != null ? c.getEmail() : "-");
+                table.addCell(String.valueOf(c.getCantidadVisitas()));
+                table.addCell(c.getGastoTotal() != null ? c.getGastoTotal().toString() : "0.00");
+                table.addCell(c.getEstadoUltimoTurno() != null ? c.getEstadoUltimoTurno() : "-");
+            }
+            document.add(table);
+            agregarGraficoPDF(document, graficoBarras, "barras.png");
+            agregarGraficoPDF(document, graficoTorta, "torta.png");
+            agregarGraficoPDF(document, graficoHistograma, "histograma.png");
+            document.close();
+            AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Exportación exitosa", null,
+                    "El reporte fue exportado correctamente a PDF.");
+        } catch (Exception e) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error de exportación", null,
+                    "Ocurrió un error al generar el archivo PDF.");
         }
     }
 
@@ -274,22 +333,19 @@ public class ReporteClienteController {
             AlertaUtil.mostrarAlerta(Alert.AlertType.WARNING, "Sin datos", null, "No hay clientes para exportar.");
             return;
         }
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Guardar reporte Excel");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo Excel (*.xlsx)", "*.xlsx"));
-        File archivo = fileChooser.showSaveDialog(null);
-
-        if (archivo != null) {
-
-            try {
-                new ExportadorExcel().exportarClientesReporte(
-                        FXCollections.observableArrayList(tablaClientes.getItems()), archivo);
-                AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Exportación exitosa", null, "El reporte se exportó a Excel (.xlsx) correctamente.");
-            } catch (Exception e) {
-                AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error de exportación", null, "Ocurrió un error al generar el archivo de Excel.");
-                e.printStackTrace();
-            }
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Guardar reporte Excel");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivo Excel (*.xlsx)", "*.xlsx"));
+        File archivo = chooser.showSaveDialog(null);
+        if (archivo == null) return;
+        try {
+            new ExportadorExcel().exportarClientesReporte(
+                    FXCollections.observableArrayList(tablaClientes.getItems()), archivo);
+            AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Exportación exitosa", null,
+                    "El reporte se exportó a Excel (.xlsx) correctamente.");
+        } catch (Exception e) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error de exportación", null,
+                    "Ocurrió un error al generar el archivo de Excel.");
         }
     }
 
@@ -298,11 +354,9 @@ public class ReporteClienteController {
         File file = new File(nombreArchivo);
         ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
         Image img = Image.getInstance(nombreArchivo);
-
         float anchoDisponible = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
         img.scaleToFit(anchoDisponible, 320f);
         document.add(img);
         file.delete();
     }
-
 }
