@@ -51,9 +51,8 @@ public class AltaTurnoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Configuraciones iniciales
         cargarEstilistas();
-        cargarServicios();
+        configurarServicios();
         cargarTiposDocumento();
 
 
@@ -64,7 +63,7 @@ public class AltaTurnoController implements Initializable {
         });
 
 
-        lvServicios.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
 
 
         lvServicios.getSelectionModel().getSelectedItems().addListener(
@@ -81,6 +80,22 @@ public class AltaTurnoController implements Initializable {
                 handleBuscarDisponibilidad(null);
             }
         });
+    }
+    private void configurarServicios() {
+        lvServicios.setCellFactory(lv -> new ListCell<Servicio>() {
+            @Override
+            protected void updateItem(Servicio item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null
+                        ? null
+                        : item.getNombreConDuracion());
+            }
+        });
+
+        lvServicios.getSelectionModel()
+                .setSelectionMode(SelectionMode.MULTIPLE);
+
+        cbEstilista.setOnAction(event -> cargarServiciosPorEstilista());
     }
 
 
@@ -141,19 +156,62 @@ public class AltaTurnoController implements Initializable {
         }
     }
 
+    private void cargarServiciosPorEstilista() {
 
-    private void cargarServicios() {
-        List<Servicio> todosServicios = servicioDAO.obtenerTodos();
-        lvServicios.setItems(FXCollections.observableArrayList(todosServicios));
+        Empleado estilista = cbEstilista.getValue();
 
-        lvServicios.setCellFactory(lv -> new ListCell<Servicio>() {
-            @Override
-            protected void updateItem(Servicio item, boolean empty) {
-                super.updateItem(item, empty);
+        // Limpiar selección anterior
+        lvServicios.getSelectionModel().clearSelection();
+        serviciosSeleccionados.clear();
+        duracionTotalMinutos = 0;
+        lblDuracionTotal.setText("Duración Total Requerida: 0 minutos");
 
-                setText(empty ? null : item.getNombreConDuracion());
+        // Limpiar turnos que podrían pertenecer al profesional anterior
+        lvTurnosDisponibles.getItems().clear();
+        bloqueSeleccionado = null;
+        btnAgendar.setDisable(true);
+
+        if (estilista == null) {
+            lvServicios.getItems().clear();
+            btnBuscarDisponibilidad.setDisable(true);
+            return;
+        }
+
+        try {
+
+            List<Servicio> servicios =
+                    servicioDAO.obtenerServiciosPorEmpleado(
+                            estilista.getIdEmpleado()
+                    );
+
+            lvServicios.setItems(
+                    FXCollections.observableArrayList(servicios)
+            );
+
+            btnBuscarDisponibilidad.setDisable(true);
+
+            if (servicios.isEmpty()) {
+                AlertaUtil.mostrarAlerta(
+                        AlertType.INFORMATION,
+                        "Sin servicios disponibles",
+                        null,
+                        "El profesional seleccionado no tiene servicios "
+                                + "asociados a sus especialidades."
+                );
             }
-        });
+
+        } catch (SQLException e) {
+
+            lvServicios.getItems().clear();
+
+            AlertaUtil.mostrarAlerta(
+                    AlertType.ERROR,
+                    "Error de BD",
+                    null,
+                    "No se pudieron cargar los servicios del profesional: "
+                            + e.getMessage()
+            );
+        }
     }
 
     private void recalcularDuracion() {
@@ -342,24 +400,34 @@ public class AltaTurnoController implements Initializable {
     }
 
 
-
     private void limpiarFormulario() {
+
         txtDocumento.clear();
+
         lblNombreCliente.setText("Cliente: N/A");
         lblNombreCliente.setStyle("-fx-text-fill: black;");
-        lvServicios.getSelectionModel().clearSelection();
-        recalcularDuracion();
-        lvTurnosDisponibles.getItems().clear();
-        txtObservaciones.clear();
-        if (!cbEstilista.getItems().isEmpty()) {
-            cbEstilista.getSelectionModel().select(0);
-        } else {
-            cbEstilista.getSelectionModel().clearSelection();
-        }
-        dpFecha.setValue(null);
+
         clienteActual = null;
+
+        cbEstilista.getSelectionModel().clearSelection();
+
+        lvServicios.getItems().clear();
+        lvServicios.getSelectionModel().clearSelection();
+
+        serviciosSeleccionados.clear();
+
+        duracionTotalMinutos = 0;
+        lblDuracionTotal.setText("Duración Total Requerida: 0 minutos.");
+
+        dpFecha.setValue(null);
+
+        lvTurnosDisponibles.getItems().clear();
+
         bloqueSeleccionado = null;
         btnAgendar.setDisable(true);
+        btnBuscarDisponibilidad.setDisable(true);
+
+        txtObservaciones.clear();
     }
 
 }

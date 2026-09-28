@@ -61,4 +61,47 @@ public class HorarioAtencionDAO {
             default: return "";
         }
     }
+    public HorarioAtencion obtenerHorarioPorDiaSemana(String diaSemana) throws SQLException {
+
+        String diaNormalizado = normalizarDia(diaSemana);
+
+        String sql = """
+        SELECT id, dia_semana, hora_apertura, hora_cierre
+        FROM horario_atencion
+        """;
+
+        try (Connection conn = ConexionBD.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                String diaBD = rs.getString("dia_semana");
+
+                if (diaBD != null
+                        && normalizarDia(diaBD).equals(diaNormalizado)) {
+
+                    return new HorarioAtencion(
+                            rs.getInt("id"),
+                            rs.getString("dia_semana"),
+                            rs.getTime("hora_apertura").toLocalTime(),
+                            rs.getTime("hora_cierre").toLocalTime()
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+
+            log.error(
+                    "Error al obtener horario de atención para el día {}",
+                    diaSemana,
+                    e
+            );
+
+            throw e;
+        }
+
+        return null;
+    }
+
 }

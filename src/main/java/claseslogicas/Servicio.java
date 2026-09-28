@@ -2,7 +2,6 @@ package claseslogicas;
 
 public class Servicio {
 
-
     private int idServicio; // PK
     private String nombreServicio;
     private String descripcion;
@@ -10,26 +9,52 @@ public class Servicio {
     private int idTurno;
 
     private double precio;
-
-
+    private double costo;
+    private boolean activo;
 
 
     public Servicio() {
+        this.activo = true;
     }
 
 
-    public Servicio(int idTipoServicio, String nombreServicio, String descripcion, int duracionMinutos, double precio) {
+    public Servicio(int idTipoServicio,
+                    String nombreServicio,
+                    String descripcion,
+                    int duracionMinutos,
+                    double precio) {
+
         this.idServicio = idTipoServicio;
         this.nombreServicio = nombreServicio;
         this.descripcion = descripcion;
         this.duracionMinutos = duracionMinutos;
         this.precio = precio;
+        this.costo = 0.0;
+        this.activo = true;
     }
+
+
+    public Servicio(int idServicio,
+                    String nombreServicio,
+                    String descripcion,
+                    int duracionMinutos,
+                    double precio,
+                    double costo,
+                    boolean activo) {
+
+        this.idServicio = idServicio;
+        this.nombreServicio = nombreServicio;
+        this.descripcion = descripcion;
+        this.duracionMinutos = duracionMinutos;
+        this.precio = precio;
+        this.costo = costo;
+        this.activo = activo;
+    }
+
 
     public String getNombreConDuracion() {
         return this.nombreServicio + " (" + this.duracionMinutos + " min)";
     }
-
 
 
     @Override
@@ -37,35 +62,88 @@ public class Servicio {
         return this.nombreServicio;
     }
 
-    // --- GETTERS Y SETTERS ---
 
-    public int getIdTipoServicio() { return idServicio; }
-    public void setIdTipoServicio(int idTipoServicio) { this.idServicio = idTipoServicio; }
+    // =========================
+    // GETTERS Y SETTERS
+    // =========================
 
-    public String getNombreServicio() { return nombreServicio; }
-    public void setNombreServicio(String nombreServicio) { this.nombreServicio = nombreServicio; }
-
-    public String getDescripcion() { return descripcion; }
-
-
-    public int getDuracionMinutos() { return duracionMinutos; }
-
-
-    public double getPrecio() { return precio; }
-    public void setPrecio(double precio) { this.precio = precio; }
-
-    public int getIdServicio() { return  idServicio;
+    public int getIdTipoServicio() {
+        return idServicio;
     }
 
-    public int getIdTurno() {
-
-        return idTurno;
+    public void setIdTipoServicio(int idTipoServicio) {
+        this.idServicio = idTipoServicio;
     }
-    public void setIdTurno(int idTurno) {
-        this.idTurno = idTurno;
+
+
+    public int getIdServicio() {
+        return idServicio;
     }
 
     public void setIdServicio(Integer id) {
         this.idServicio = id;
+    }
+
+
+    public String getNombreServicio() {
+        return nombreServicio;
+    }
+
+    public void setNombreServicio(String nombreServicio) {
+        this.nombreServicio = nombreServicio;
+    }
+
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+
+    public int getDuracionMinutos() {
+        return duracionMinutos;
+    }
+
+    public void setDuracionMinutos(int duracionMinutos) {
+        this.duracionMinutos = duracionMinutos;
+    }
+
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+
+    public double getCosto() {
+        return costo;
+    }
+
+    public void setCosto(double costo) {
+        this.costo = costo;
+    }
+
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+
+    public int getIdTurno() {
+        return idTurno;
+    }
+
+    public void setIdTurno(int idTurno) {
+        this.idTurno = idTurno;
     }
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GestionStockController" stylesheets="@/resource/styles.css">
+ <children><VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+  <Label text="PRODUCTOS, STOCK Y PROVEEDORES"><font><Font name="System Bold" size="22"/></font></Label>
+  <TabPane VBox.vgrow="ALWAYS">
+   <tabs>
+    <Tab text="Productos y stock" closable="false"><content><VBox spacing="8"><padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+      <GridPane hgap="8" vgap="8">
+       <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/><TextField fx:id="txtProductoNombre" promptText="Ej. Shampoo" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+       <Label text="Descripción:" GridPane.rowIndex="0" GridPane.columnIndex="2"/><TextField fx:id="txtProductoDescripcion" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+       <Label text="Stock inicial:" GridPane.rowIndex="1" GridPane.columnIndex="0"/><TextField fx:id="txtStockInicial" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+       <Label text="Stock mínimo:" GridPane.rowIndex="1" GridPane.columnIndex="2"/><TextField fx:id="txtStockMinimo" text="0" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+       <CheckBox fx:id="chkProductoActivo" text="Activo" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+       <HBox spacing="8" GridPane.rowIndex="2" GridPane.columnIndex="2" GridPane.columnSpan="2"><Button fx:id="btnProductoGuardar" text="Registrar producto" onAction="#guardarProducto"/><Button text="Nuevo" onAction="#nuevoProducto"/><Button fx:id="btnProductoEstado" text="Dar de baja" onAction="#cambiarEstadoProducto"/></HBox>
+      </GridPane>
+      <TableView fx:id="tvProductos" VBox.vgrow="ALWAYS"><columns>
+       <TableColumn fx:id="colProdNombre" text="Producto"/><TableColumn fx:id="colProdDescripcion" text="Descripción"/><TableColumn fx:id="colProdStock" text="Stock"/><TableColumn fx:id="colProdMinimo" text="Mínimo"/><TableColumn fx:id="colProdEstado" text="Estado"/><TableColumn fx:id="colProdAlerta" text="Alerta"/>
+      </columns></TableView>
+    </VBox></content></Tab>
+
+    <Tab text="Consumo / baja" closable="false"><content><VBox spacing="12"><padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+      <Label text="Registrar consumo de producto"><font><Font name="System Bold" size="18"/></font></Label>
+      <Label text="El consumo descuenta la cantidad utilizada del stock y registra el usuario que realizó la operación." wrapText="true"/>
+      <GridPane hgap="10" vgap="10"><Label text="Producto:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><ComboBox fx:id="cbConsumoProducto" prefWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+       <Label text="Cantidad utilizada:" GridPane.columnIndex="0" GridPane.rowIndex="1"/><TextField fx:id="txtConsumoCantidad" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+       <Label fx:id="lblStockConsumo" text="Stock actual: -" GridPane.columnIndex="1" GridPane.rowIndex="2"/><Button text="Registrar consumo / baja" onAction="#registrarConsumo" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+      </GridPane>
+    </VBox></content></Tab>
+
+    <Tab text="Proveedores" closable="false"><content><VBox spacing="8"><padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+      <GridPane hgap="8" vgap="8"><Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><TextField fx:id="txtProveedorNombre" GridPane.columnIndex="1" GridPane.rowIndex="0"/><Label text="Teléfono:" GridPane.columnIndex="2" GridPane.rowIndex="0"/><TextField fx:id="txtProveedorTelefono" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+       <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1"/><TextField fx:id="txtProveedorEmail" GridPane.columnIndex="1" GridPane.rowIndex="1"/><Label text="Dirección:" GridPane.columnIndex="2" GridPane.rowIndex="1"/><TextField fx:id="txtProveedorDireccion" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+       <HBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="2"><Button fx:id="btnProveedorGuardar" text="Registrar proveedor" onAction="#guardarProveedor"/><Button text="Nuevo" onAction="#nuevoProveedor"/></HBox>
+      </GridPane>
+      <TableView fx:id="tvProveedores" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colProvNombre" text="Proveedor"/><TableColumn fx:id="colProvTelefono" text="Teléfono"/><TableColumn fx:id="colProvEmail" text="Email"/><TableColumn fx:id="colProvDireccion" text="Dirección"/></columns></TableView>
+    </VBox></content></Tab>
+
+    <Tab text="Compras" closable="false"><content><VBox spacing="8"><padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
+      <GridPane hgap="8" vgap="8"><Label text="Proveedor:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><ComboBox fx:id="cbCompraProveedor" prefWidth="220" GridPane.columnIndex="1" GridPane.rowIndex="0"/><Label text="Producto:" GridPane.columnIndex="2" GridPane.rowIndex="0"/><ComboBox fx:id="cbCompraProducto" prefWidth="220" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+       <Label text="Cantidad:" GridPane.columnIndex="0" GridPane.rowIndex="1"/><TextField fx:id="txtCompraCantidad" GridPane.columnIndex="1" GridPane.rowIndex="1"/><Label text="Precio unitario:" GridPane.columnIndex="2" GridPane.rowIndex="1"/><TextField fx:id="txtCompraPrecio" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+       <Button text="Registrar compra" onAction="#registrarCompra" GridPane.columnIndex="1" GridPane.rowIndex="2"/><Button text="Actualizar listado" onAction="#refrescar" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+      </GridPane>
+      <TableView fx:id="tvCompras" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colCompraId" text="#"/><TableColumn fx:id="colCompraProveedor" text="Proveedor"/><TableColumn fx:id="colCompraProducto" text="Producto"/><TableColumn fx:id="colCompraCantidad" text="Cantidad"/><TableColumn fx:id="colCompraPrecio" text="Precio unit."/><TableColumn fx:id="colCompraTotal" text="Total"/><TableColumn fx:id="colCompraFecha" text="Fecha"/><TableColumn fx:id="colCompraUsuario" text="Usuario"/></columns></TableView>
+    </VBox></content></Tab>
+   </tabs>
+  </TabPane>
+ </VBox></children>
+</AnchorPane>

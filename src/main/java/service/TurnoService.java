@@ -1,6 +1,7 @@
 package service;
 
 import claseslogicas.*;
+import dao.DisponibilidadDAO;
 import dao.EmpleadoDAO;
 import dao.HorarioAtencionDAO;
 import dao.TurnoDAO;
@@ -23,37 +24,112 @@ public class TurnoService {
     private final HorarioAtencionDAO horarioDAO = new HorarioAtencionDAO();
     private final VisitaService visitaService = new VisitaService();
     private final FacturaService facturaService = new FacturaService();
+    private final DisponibilidadDAO disponibilidadDAO = new DisponibilidadDAO();
 
     private static final int INTERVALO_MINUTOS = 30;
+    public List<BloqueDisponible> buscarDisponibilidad(
+            LocalDate fecha,
+            int duracionTotalMinutos,
+            Integer idEstilistaOpcional) throws SQLException {
 
-    public List<BloqueDisponible> buscarDisponibilidad(LocalDate fecha, int duracionTotalMinutos, Integer idEstilistaOpcional) throws SQLException {
         List<BloqueDisponible> disponibles = new ArrayList<>();
 
+        // 1. Obtener horario general del salón
         HorarioAtencion horario = horarioDAO.obtenerHorarioPorDia(fecha);
-        if (horario == null || horario.getHoraApertura().equals(horario.getHoraCierre())) {
+
+        if (horario == null
+                || horario.getHoraApertura().equals(horario.getHoraCierre())) {
             return disponibles;
         }
 
-        LocalTime inicioDia = horario.getHoraApertura();
-        LocalTime finDia = horario.getHoraCierre();
+        LocalTime aperturaSalon = horario.getHoraApertura();
+        LocalTime cierreSalon = horario.getHoraCierre();
 
+        // 2. Obtener profesionales
         List<Empleado> estilistas = (idEstilistaOpcional != null)
                 ? empleadoDAO.obtenerEstilistasPorId(idEstilistaOpcional)
                 : empleadoDAO.obtenerEstilistas();
 
+        // 3. Obtener nombre del día
+        String diaSemana = switch (fecha.getDayOfWeek()) {
+            case MONDAY -> "Lunes";
+            case TUESDAY -> "Martes";
+            case WEDNESDAY -> "Miércoles";
+            case THURSDAY -> "Jueves";
+            case FRIDAY -> "Viernes";
+            case SATURDAY -> "Sábado";
+            case SUNDAY -> "Domingo";
+        };
+
+        // 4. Procesar cada profesional
         for (Empleado empleado : estilistas) {
-            LocalTime horaActual = inicioDia;
 
-            while (!horaActual.plusMinutes(duracionTotalMinutos).isAfter(finDia)) {
-                boolean disponible = turnoDAO.validarDisponibilidad(
-                        empleado.getIdEmpleado(), fecha, horaActual, duracionTotalMinutos);
+            List<Disponibilidad> disponibilidades =
+                    disponibilidadDAO.obtenerPorEmpleado(
+                            empleado.getIdEmpleado()
+                    );
 
-                if (disponible) {
-                    disponibles.add(new BloqueDisponible(
-                            horaActual, horaActual.plusMinutes(duracionTotalMinutos), empleado));
+            // Buscar disponibilidad del profesional para ese día
+            for (Disponibilidad disponibilidad : disponibilidades) {
+
+                if (!disponibilidad.isActivo()) {
+                    continue;
                 }
 
-                horaActual = horaActual.plusMinutes(INTERVALO_MINUTOS);
+                if (!disponibilidad.getDiaSemana().equalsIgnoreCase(diaSemana)) {
+                    continue;
+                }
+
+                // 5. Intersección entre horario del salón
+                //    y disponibilidad del profesional
+
+                LocalTime inicioDisponible =
+                        disponibilidad.getHoraDesde().isAfter(aperturaSalon)
+                                ? disponibilidad.getHoraDesde()
+                                : aperturaSalon;
+
+                LocalTime finDisponible =
+                        disponibilidad.getHoraHasta().isBefore(cierreSalon)
+                                ? disponibilidad.getHoraHasta()
+                                : cierreSalon;
+
+                // No existe intersección
+                if (!inicioDisponible.isBefore(finDisponible)) {
+                    continue;
+                }
+
+                // 6. Generar bloques cada 30 minutos
+                LocalTime horaActual = inicioDisponible;
+
+                while (!horaActual
+                        .plusMinutes(duracionTotalMinutos)
+                        .isAfter(finDisponible)) {
+
+                    // 7. Verificar que no exista otro turno
+                    boolean disponible =
+                            turnoDAO.validarDisponibilidad(
+                                    empleado.getIdEmpleado(),
+                                    fecha,
+                                    horaActual,
+                                    duracionTotalMinutos
+                            );
+
+                    if (disponible) {
+
+                        disponibles.add(
+                                new BloqueDisponible(
+                                        horaActual,
+                                        horaActual.plusMinutes(
+                                                duracionTotalMinutos
+                                        ),
+                                        empleado
+                                )
+                        );
+                    }
+
+                    horaActual =
+                            horaActual.plusMinutes(INTERVALO_MINUTOS);
+                }
             }
         }
 

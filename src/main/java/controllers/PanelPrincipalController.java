@@ -4,7 +4,9 @@ import claseslogicas.Usuario;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -28,6 +30,8 @@ public class PanelPrincipalController {
     @FXML private Button btnListadoFacturas;
     @FXML private Button btnReporteFacturacion;
     @FXML private Button btnExportarTodoPower;
+    @FXML private Button btnGestionProfesionales;
+    @FXML private Button btnGestionStock;
 
     private Usuario usuarioLogueado;
 
@@ -47,6 +51,7 @@ public class PanelPrincipalController {
         btnReporteFacturacion.setDisable(!esGerente);
         btnExportarTodoPower.setDisable(!esGerente);
         btnListadoFacturas.setDisable(esEstilista);
+        btnGestionProfesionales.setDisable(!esGerente);
     }
 
 
@@ -100,7 +105,18 @@ public class PanelPrincipalController {
     private void exportarReporteGeneral(ActionEvent event) {
         new ReporteGeneralController().exportarTodoEnExcel();
     }
-
+    @FXML
+    private void abrirModuloProfesionales() {
+        cargarVista("/interface/moduloPrincipalProfesional.fxml");
+    }
+    @FXML
+    private void abrirModuloStock() {
+        cargarVista("/interface/GestionStock.fxml");
+    }
+    @FXML
+    private void abrirModuloServicios() {
+        cargarVista("/interface/Servicios.fxml");
+    }
     @FXML
     public void cerrarSesion() {
         try {

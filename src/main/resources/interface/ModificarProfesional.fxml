@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.control.*?>
+
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ModificarProfesionalController"
+            prefWidth="900.0"
+            prefHeight="720.0"
+            minWidth="800.0"
+            minHeight="600.0">
+
+
+    <!-- ========================================================= -->
+    <!-- CONTENIDO CENTRAL CON SCROLL -->
+    <!-- ========================================================= -->
+
+    <center>
+
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="false"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED">
+
+            <content>
+
+                <VBox spacing="12.0"
+                      fillWidth="true">
+
+                    <padding>
+                        <Insets top="15"
+                                right="20"
+                                bottom="15"
+                                left="20"/>
+                    </padding>
+
+
+                    <!-- ================================================= -->
+                    <!-- DATOS PERSONALES -->
+                    <!-- ================================================= -->
+
+                    <Label text="DATOS PERSONALES"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="10"
+                              vgap="8">
+
+                        <columnConstraints>
+
+                            <ColumnConstraints minWidth="110"
+                                               prefWidth="110"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"
+                                               fillWidth="true"/>
+
+                            <ColumnConstraints minWidth="110"
+                                               prefWidth="110"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"
+                                               fillWidth="true"/>
+
+                        </columnConstraints>
+
+                        <children>
+
+                            <Label text="Nombre:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="0"/>
+
+                            <TextField fx:id="txtNombre"
+                                       GridPane.columnIndex="1"
+                                       GridPane.rowIndex="0"/>
+
+                            <Label text="Apellido:"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="0"/>
+
+                            <TextField fx:id="txtApellido"
+                                       GridPane.columnIndex="3"
+                                       GridPane.rowIndex="0"/>
+
+
+                            <Label text="Teléfono:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="1"/>
+
+                            <TextField fx:id="txtTelefono"
+                                       GridPane.columnIndex="1"
+                                       GridPane.rowIndex="1"/>
+
+                            <Label text="Email:"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="1"/>
+
+                            <TextField fx:id="txtEmail"
+                                       GridPane.columnIndex="3"
+                                       GridPane.rowIndex="1"/>
+
+                        </children>
+
+                    </GridPane>
+
+
+                    <!-- ================================================= -->
+                    <!-- DOCUMENTACIÓN -->
+                    <!-- ================================================= -->
+
+                    <Label text="DOCUMENTACIÓN"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="10"
+                              vgap="8">
+
+                        <columnConstraints>
+
+                            <ColumnConstraints minWidth="110"
+                                               prefWidth="110"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"/>
+
+                            <ColumnConstraints minWidth="110"
+                                               prefWidth="110"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"/>
+
+                        </columnConstraints>
+
+                        <children>
+
+                            <Label text="Tipo documento:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="0"/>
+
+                            <TextField fx:id="txtTipoDocumento"
+                                       editable="false"
+                                       GridPane.columnIndex="1"
+                                       GridPane.rowIndex="0"/>
+
+                            <Label text="Número:"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="0"/>
+
+                            <TextField fx:id="txtNumeroDocumento"
+                                       editable="false"
+                                       GridPane.columnIndex="3"
+                                       GridPane.rowIndex="0"/>
+
+                        </children>
+
+                    </GridPane>
+
+
+                    <!-- ================================================= -->
+                    <!-- DOMICILIO -->
+                    <!-- ================================================= -->
+
+                    <Label text="DOMICILIO"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="10"
+                              vgap="8">
+
+                        <columnConstraints>
+
+                            <ColumnConstraints minWidth="110"
+                                               prefWidth="110"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"/>
+
+                            <ColumnConstraints minWidth="110"
+                                               prefWidth="110"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"/>
+
+                        </columnConstraints>
+
+                        <children>
+
+                            <Label text="Provincia:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="0"/>
+
+                            <ComboBox fx:id="cmbProvincia"
+                                      maxWidth="Infinity"
+                                      GridPane.columnIndex="1"
+                                      GridPane.rowIndex="0"/>
+
+                            <Label text="Ciudad:"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="0"/>
+
+                            <ComboBox fx:id="cmbCiudad"
+                                      maxWidth="Infinity"
+                                      GridPane.columnIndex="3"
+                                      GridPane.rowIndex="0"/>
+
+
+                            <Label text="Barrio:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="1"/>
+
+                            <ComboBox fx:id="cmbBarrio"
+                                      maxWidth="Infinity"
+                                      GridPane.columnIndex="1"
+                                      GridPane.rowIndex="1"/>
+
+                            <Label text="Calle:"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="1"/>
+
+                            <TextField fx:id="txtCalle"
+                                       GridPane.columnIndex="3"
+                                       GridPane.rowIndex="1"/>
+
+
+                            <Label text="Número:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="2"/>
+
+                            <TextField fx:id="txtNumero"
+                                       GridPane.columnIndex="1"
+                                       GridPane.rowIndex="2"/>
+
+                        </children>
+
+                    </GridPane>
+
+
+                    <!-- ================================================= -->
+                    <!-- DATOS PROFESIONALES -->
+                    <!-- ================================================= -->
+
+                    <Label text="DATOS PROFESIONALES"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+                    <GridPane hgap="10"
+                              vgap="8">
+
+                        <columnConstraints>
+
+                            <ColumnConstraints minWidth="140"
+                                               prefWidth="140"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"/>
+
+                            <ColumnConstraints minWidth="130"
+                                               prefWidth="130"/>
+
+                            <ColumnConstraints hgrow="ALWAYS"/>
+
+                        </columnConstraints>
+
+                        <children>
+
+                            <Label text="Fecha de ingreso:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="0"/>
+
+                            <DatePicker fx:id="dpFechaIngreso"
+                                        maxWidth="Infinity"
+                                        GridPane.columnIndex="1"
+                                        GridPane.rowIndex="0"/>
+
+
+                            <Label text="Comisión (%):"
+                                   GridPane.columnIndex="2"
+                                   GridPane.rowIndex="0"/>
+
+                            <TextField fx:id="txtPorcentajeComision"
+                                       GridPane.columnIndex="3"
+                                       GridPane.rowIndex="0"/>
+
+
+                            <Label text="Rol:"
+                                   GridPane.columnIndex="0"
+                                   GridPane.rowIndex="1"/>
+
+                            <TextField fx:id="txtRol"
+                                       editable="false"
+                                       GridPane.columnIndex="1"
+                                       GridPane.rowIndex="1"/>
+
+                        </children>
+
+                    </GridPane>
+
+
+                    <!-- ================================================= -->
+                    <!-- ESPECIALIDADES -->
+                    <!-- ================================================= -->
+
+                    <Label text="ESPECIALIDADES"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+                    <HBox spacing="8">
+
+                        <ComboBox fx:id="cmbEspecialidad"
+                                  promptText="Seleccionar especialidad"
+                                  prefWidth="280"/>
+
+                        <Button text="Agregar"
+                                onAction="#agregarEspecialidad"/>
+
+                        <Button text="Quitar"
+                                onAction="#quitarEspecialidad"/>
+
+                    </HBox>
+
+
+                    <ListView fx:id="lstEspecialidades"
+                              prefHeight="65.0"
+                              minHeight="65.0"
+                              maxHeight="65.0"/>
+
+
+                    <!-- ================================================= -->
+                    <!-- DISPONIBILIDAD -->
+                    <!-- ================================================= -->
+
+                    <Label text="DISPONIBILIDAD"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+
+
+                    <TableView fx:id="tblDisponibilidades"
+                               prefHeight="125.0"
+                               minHeight="125.0"
+                               maxHeight="125.0">
+
+                        <columns>
+
+                            <TableColumn fx:id="colDia"
+                                         text="Día"
+                                         prefWidth="180"/>
+
+                            <TableColumn fx:id="colHoraDesde"
+                                         text="Hora desde"
+                                         prefWidth="180"/>
+
+                            <TableColumn fx:id="colHoraHasta"
+                                         text="Hora hasta"
+                                         prefWidth="180"/>
+
+                            <TableColumn fx:id="colEstado"
+                                         text="Estado"
+                                         prefWidth="130"/>
+
+                        </columns>
+
+                    </TableView>
+
+
+                    <!-- ================================================= -->
+                    <!-- CONTROLES DISPONIBILIDAD -->
+                    <!-- ================================================= -->
+
+                    <HBox spacing="8"
+                          alignment="CENTER_LEFT">
+
+                        <Label text="Día:"/>
+
+                        <ComboBox fx:id="cmbDiaSemana"
+                                  promptText="Día"
+                                  prefWidth="125"/>
+
+                        <Label text="Desde:"/>
+
+                        <ComboBox fx:id="cmbHoraDesde"
+                                  promptText="Desde"
+                                  prefWidth="100"/>
+
+                        <Label text="Hasta:"/>
+
+                        <ComboBox fx:id="cmbHoraHasta"
+                                  promptText="Hasta"
+                                  prefWidth="100"/>
+
+                    </HBox>
+
+
+                    <HBox spacing="8">
+
+                        <Button text="Agregar disponibilidad"
+                                onAction="#agregarDisponibilidad"/>
+
+                        <Button text="Modificar seleccionada"
+                                onAction="#modificarDisponibilidad"/>
+
+                        <Button text="Quitar seleccionada"
+                                onAction="#quitarDisponibilidad"/>
+
+                    </HBox>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+
+    <!-- ========================================================= -->
+    <!-- BOTONES INFERIORES SIEMPRE VISIBLES -->
+    <!-- ========================================================= -->
+
+    <bottom>
+
+        <HBox spacing="10"
+              alignment="CENTER_RIGHT"
+              prefHeight="58.0"
+              minHeight="58.0"
+              maxHeight="58.0"
+              style="-fx-background-color: #f4f4f4; -fx-border-color: #d0d0d0; -fx-border-width: 1 0 0 0;">
+
+            <padding>
+                <Insets top="10"
+                        right="20"
+                        bottom="10"
+                        left="20"/>
+            </padding>
+
+            <Button text="Cancelar"
+                    prefWidth="110"
+                    prefHeight="35"
+                    onAction="#cancelar"/>
+
+            <Button text="Guardar cambios"
+                    prefWidth="150"
+                    prefHeight="35"
+                    defaultButton="true"
+                    onAction="#handleGuardarCambios"/>
+
+        </HBox>
+
+    </bottom>
+
+
+</BorderPane>

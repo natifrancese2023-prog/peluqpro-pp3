@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+        <?import javafx.geometry.Insets?>
+        <?import javafx.scene.control.Button?>
+        <?import javafx.scene.control.Label?>
+        <?import javafx.scene.control.ListView?>
+        <?import javafx.scene.control.TableColumn?>
+        <?import javafx.scene.control.TableView?>
+        <?import javafx.scene.control.TextField?>
+        <?import javafx.scene.control.cell.PropertyValueFactory?>
+        <?import javafx.scene.layout.BorderPane?>
+        <?import javafx.scene.layout.GridPane?>
+        <?import javafx.scene.layout.HBox?>
+        <?import javafx.scene.layout.Priority?>
+        <?import javafx.scene.layout.StackPane?>
+        <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ServiciosController"
+            prefWidth="1100.0"
+            prefHeight="700.0">
+
+    <!-- ====================================================== -->
+    <!-- ENCABEZADO                                             -->
+    <!-- ====================================================== -->
+
+    <top>
+        <VBox spacing="5.0">
+            <padding>
+                <Insets top="20.0"
+                        right="25.0"
+                        bottom="15.0"
+                        left="25.0"/>
+            </padding>
+
+            <Label text="SERVICIOS"
+                   style="-fx-font-size: 26px; -fx-font-weight: bold;"/>
+
+            <Label text="Gestión de servicios y especialidades"
+                   style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+        </VBox>
+    </top>
+
+
+    <!-- ====================================================== -->
+    <!-- CONTENIDO                                               -->
+    <!-- ====================================================== -->
+
+    <center>
+        <VBox spacing="15.0">
+            <padding>
+                <Insets top="5.0"
+                        right="25.0"
+                        bottom="25.0"
+                        left="25.0"/>
+            </padding>
+
+
+            <!-- ================================================== -->
+            <!-- BOTONES PRINCIPALES                                -->
+            <!-- ================================================== -->
+
+            <HBox spacing="15.0">
+
+                <Button fx:id="btnGestionarServicios"
+                        mnemonicParsing="false"
+                        prefHeight="45.0"
+                        prefWidth="180.0"
+
+                        styleClass="menu-button"
+                        text="GESTIONAR SERVICIOS"
+
+                        onAction="#mostrarGestionServicios"/>
+
+                <Button fx:id="btnGestionarEspecialidades"
+                        text="GESTIONAR ESPECIALIDADES"
+                        mnemonicParsing="false"
+                        prefHeight="45.0"
+                        prefWidth="180.0"
+
+                        onAction="#mostrarGestionEspecialidades"/>
+
+                <Button text="RANKING DE MARGEN"
+                        mnemonicParsing="false"
+                        prefHeight="45.0"
+                        prefWidth="180.0"
+
+                        onAction="#verRankingMargen"/>
+
+            </HBox>
+
+
+            <!-- ================================================== -->
+            <!-- CONTENEDOR PRINCIPAL                               -->
+            <!-- ================================================== -->
+
+            <StackPane fx:id="contenedorVistas"
+                       VBox.vgrow="ALWAYS">
+
+
+                <!-- ================================================== -->
+                <!-- VISTA INICIAL                                       -->
+                <!-- ================================================== -->
+
+                <VBox fx:id="vistaInicio"
+                      alignment="CENTER"
+                      spacing="10.0">
+
+                    <Label text="Seleccione una opción"
+                           style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+                    <Label text="Seleccione Gestionar Servicios o Gestionar Especialidades"
+                           style="-fx-text-fill: #666666;"/>
+
+                </VBox>
+
+
+                <!-- ================================================== -->
+                <!-- GESTIONAR SERVICIOS                                 -->
+                <!-- ================================================== -->
+
+                <VBox fx:id="panelServicios"
+                      spacing="12.0"
+                      visible="false"
+                      managed="false">
+
+                    <HBox spacing="10.0"
+                          alignment="CENTER_LEFT">
+
+                        <Label text="GESTIONAR SERVICIOS"
+                               style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+                        <Label text="Catálogo de servicios"
+                               style="-fx-text-fill: #666666;"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <TextField fx:id="txtBuscarServicio"
+                                   promptText="Buscar servicio..."
+                                   prefWidth="250.0"/>
+
+                    </HBox>
+
+
+                    <!-- TABLA DE SERVICIOS -->
+
+                    <TableView fx:id="tablaServicios"
+                               VBox.vgrow="ALWAYS">
+
+                        <columns>
+
+                            <TableColumn fx:id="colNombreServicio"
+                                         text="Servicio"
+                                         prefWidth="220.0"/>
+
+                            <TableColumn fx:id="colDescripcionServicio"
+                                         text="Descripción"
+                                         prefWidth="250.0"/>
+
+                            <TableColumn fx:id="colDuracionServicio"
+                                         text="Duración"
+                                         prefWidth="100.0"/>
+
+                            <TableColumn fx:id="colPrecioServicio"
+                                         text="Precio"
+                                         prefWidth="120.0"/>
+
+                            <TableColumn fx:id="colCostoServicio"
+                                         text="Costo"
+                                         prefWidth="120.0"/>
+
+                            <TableColumn fx:id="colEstadoServicio"
+                                         text="Estado"
+                                         prefWidth="100.0"/>
+
+                        </columns>
+
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+
+                    </TableView>
+
+
+                    <!-- BOTONES -->
+
+                    <HBox spacing="10.0"
+                          alignment="CENTER_RIGHT">
+
+                        <Button fx:id="btnNuevoServicio"
+                                text="NUEVO SERVICIO"
+                                onAction="#nuevoServicio"/>
+
+                        <Button fx:id="btnModificarServicio"
+                                text="MODIFICAR"
+                                onAction="#modificarServicio"/>
+
+                        <Button fx:id="btnEstadoServicio"
+                                text="ACTIVAR / INACTIVAR"
+                                onAction="#cambiarEstadoServicio"/>
+
+                    </HBox>
+
+                </VBox>
+
+
+                <!-- ================================================== -->
+                <!-- GESTIONAR ESPECIALIDADES                           -->
+                <!-- ================================================== -->
+
+                <VBox fx:id="panelEspecialidades"
+                      spacing="12.0"
+                      visible="false"
+                      managed="false">
+
+                    <HBox spacing="10.0"
+                          alignment="CENTER_LEFT">
+
+                        <Label text="GESTIONAR ESPECIALIDADES"
+                               style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+                        <Label text="Especialidades y servicios asociados"
+                               style="-fx-text-fill: #666666;"/>
+
+                    </HBox>
+
+
+                    <!-- CONTENIDO ESPECIALIDADES -->
+
+                    <HBox spacing="15.0"
+                          VBox.vgrow="ALWAYS">
+
+
+                        <!-- ========================================== -->
+                        <!-- LISTA DE ESPECIALIDADES                    -->
+                        <!-- ========================================== -->
+
+                        <VBox spacing="8.0"
+                              prefWidth="350.0">
+
+                            <Label text="ESPECIALIDADES"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                            <TextField fx:id="txtBuscarEspecialidad"
+                                       promptText="Buscar especialidad..."/>
+
+                            <ListView fx:id="listaEspecialidades"
+                                      VBox.vgrow="ALWAYS"/>
+
+                            <HBox spacing="8.0">
+
+                                <Button fx:id="btnNuevaEspecialidad"
+                                        text="NUEVA"
+                                        onAction="#nuevaEspecialidad"/>
+
+                                <Button fx:id="btnModificarEspecialidad"
+                                        text="MODIFICAR"
+                                        onAction="#modificarEspecialidad"/>
+
+                                <Button fx:id="btnEstadoEspecialidad"
+                                        text="ACTIVAR / INACTIVAR"
+                                        onAction="#cambiarEstadoEspecialidad"/>
+
+                            </HBox>
+
+                        </VBox>
+
+
+                        <!-- ========================================== -->
+                        <!-- SERVICIOS DE LA ESPECIALIDAD               -->
+                        <!-- ========================================== -->
+
+                        <VBox spacing="8.0"
+                              HBox.hgrow="ALWAYS">
+
+                            <Label fx:id="lblEspecialidadSeleccionada"
+                                   text="SERVICIOS ASOCIADOS"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                            <TableView fx:id="tablaServiciosEspecialidad"
+                                       VBox.vgrow="ALWAYS">
+
+                                <columns>
+
+                                    <TableColumn fx:id="colServicioEspecialidad"
+                                                 text="Servicio"
+                                                 prefWidth="220.0"/>
+
+                                    <TableColumn fx:id="colDuracionEspecialidad"
+                                                 text="Duración"
+                                                 prefWidth="100.0"/>
+
+                                    <TableColumn fx:id="colPrecioEspecialidad"
+                                                 text="Precio"
+                                                 prefWidth="120.0"/>
+
+                                    <TableColumn fx:id="colEstadoEspecialidadServicio"
+                                                 text="Estado"
+                                                 prefWidth="100.0"/>
+
+                                </columns>
+
+                                <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                                </columnResizePolicy>
+
+                            </TableView>
+
+
+                            <!-- BOTONES DE ASOCIACIÓN -->
+
+                            <HBox spacing="10.0"
+                                  alignment="CENTER_RIGHT">
+
+                                <Button fx:id="btnAsociarServicio"
+                                        text="ASOCIAR SERVICIO"
+                                        onAction="#asociarServicio"/>
+
+                                <Button fx:id="btnDesasociarServicio"
+                                        text="DESASOCIAR SERVICIO"
+                                        onAction="#desasociarServicio"/>
+
+                            </HBox>
+
+                        </VBox>
+
+                    </HBox>
+
+                </VBox>
+
+            </StackPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>
+
