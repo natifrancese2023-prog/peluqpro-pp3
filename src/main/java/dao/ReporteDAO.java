@@ -1,6 +1,7 @@
 package dao;
 
 import claseslogicas.ClienteReporteExtendido;
+import claseslogicas.ClienteRiesgo;
 import claseslogicas.EstadoFactura;
 import java.sql.*;
 import java.time.LocalDate;
@@ -123,6 +124,76 @@ public class ReporteDAO {
                     }
                     java.math.BigDecimal total = rs.getBigDecimal("total");
                     return total.divide(java.math.BigDecimal.valueOf(cantidad), 2, java.math.RoundingMode.HALF_UP);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtiene los clientes activos cuya última visita fue hace más de tres meses.
+     * La regla de negocio RN1 se aplica sobre la fecha de la última visita registrada.
+     */
+    public List<ClienteRiesgo> obtenerClientesEnRiesgo() throws SQLException {
+        List<ClienteRiesgo> lista = new ArrayList<>();
+
+        String sql = """
+            SELECT
+                c.id_cliente,
+                CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo,
+                p.telefono,
+                p.email,
+                MAX(v.fecha_hora) AS ultima_visita
+            FROM cliente c
+            JOIN persona p ON p.id_persona = c.id_persona
+            JOIN visita v ON v.id_cliente = c.id_cliente
+            WHERE c.activo = TRUE
+            GROUP BY c.id_cliente, p.nombre, p.apellido, p.telefono, p.email
+            HAVING MAX(v.fecha_hora) < CURRENT_TIMESTAMP - INTERVAL '3 months'
+            ORDER BY ultima_visita ASC
+        """;
+
+        try (Connection conn = ConexionBD.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Timestamp timestamp = rs.getTimestamp("ultima_visita");
+                lista.add(new ClienteRiesgo(
+                        rs.getInt("id_cliente"),
+                        rs.getString("nombre_completo"),
+                        rs.getString("telefono"),
+                        rs.getString("email"),
+                        timestamp != null ? timestamp.toLocalDateTime() : null
+                ));
+            }
+        }
+        return lista;
+    }
+
+    /**
+     * Calcula el ticket promedio general del período seleccionado.
+     * Se consideran únicamente facturas facturadas o pagadas; las anuladas quedan fuera.
+     */
+    public java.math.BigDecimal obtenerTicketPromedio(LocalDate desde, LocalDate hasta) throws SQLException {
+        String sql = """
+            SELECT AVG(total) AS ticket_promedio
+            FROM factura
+            WHERE fecha_hora >= ?
+              AND fecha_hora < ?
+              AND id_estado_factura IN (?, ?)
+        """;
+
+        try (Connection conn = ConexionBD.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setTimestamp(1, Timestamp.valueOf(desde.atStartOfDay()));
+            ps.setTimestamp(2, Timestamp.valueOf(hasta.plusDays(1).atStartOfDay()));
+            ps.setInt(3, EstadoFactura.FACTURADA.getIdEstadoFactura());
+            ps.setInt(4, EstadoFactura.PAGADA.getIdEstadoFactura());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    java.math.BigDecimal promedio = rs.getBigDecimal("ticket_promedio");
+                    return promedio == null ? null : promedio.setScale(2, java.math.RoundingMode.HALF_UP);
                 }
             }
         }

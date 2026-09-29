@@ -4,7 +4,8 @@
         <?import javafx.scene.layout.*?>
         <?import javafx.geometry.Insets?>
 
-<ScrollPane fitToHeight="true"
+<ScrollPane styleClass="erp-root"
+            fitToHeight="false"
             fitToWidth="true"
             stylesheets="@/resource/styles.css"
             xmlns="http://javafx.com/javafx/21"
@@ -13,11 +14,11 @@
 
     <content>
 
-        <AnchorPane prefHeight="800.0" prefWidth="950.0">
+        <AnchorPane prefHeight="-1.0" prefWidth="950.0">
 
             <children>
 
-                <VBox spacing="20.0"
+                <VBox styleClass="erp-page" spacing="20.0"
                       AnchorPane.topAnchor="0.0"
                       AnchorPane.bottomAnchor="0.0"
                       AnchorPane.leftAnchor="0.0"
@@ -39,7 +40,7 @@
                     <!-- 1. IDENTIFICACIÓN DEL CLIENTE -->
                     <!-- ================================================= -->
 
-                    <GridPane hgap="15.0"
+                    <GridPane styleClass="erp-card" hgap="15.0"
                               vgap="12.0">
 
                         <columnConstraints>
@@ -52,7 +53,7 @@
                                GridPane.columnSpan="3"
                                styleClass="label-section"/>
 
-                        <ComboBox fx:id="cbTipoDocumento"
+                        <ComboBox maxWidth="1.7976931348623157E308" fx:id="cbTipoDocumento"
                                   promptText="Tipo Doc."
                                   GridPane.rowIndex="1"
                                   styleClass="combo-box"/>
@@ -79,14 +80,13 @@
                     </GridPane>
 
 
-                    <Separator/>
 
 
                     <!-- ================================================= -->
                     <!-- 2. SELECCIÓN DEL PROFESIONAL -->
                     <!-- ================================================= -->
 
-                    <GridPane hgap="15.0"
+                    <GridPane styleClass="erp-card" hgap="15.0"
                               vgap="12.0">
 
                         <columnConstraints>
@@ -99,7 +99,7 @@
                                GridPane.columnSpan="3"
                                styleClass="label-section"/>
 
-                        <ComboBox fx:id="cbEstilista"
+                        <ComboBox maxWidth="1.7976931348623157E308" fx:id="cbEstilista"
                                   promptText="Seleccionar Profesional"
                                   GridPane.columnSpan="2"
                                   GridPane.rowIndex="1"
@@ -108,14 +108,13 @@
                     </GridPane>
 
 
-                    <Separator/>
 
 
                     <!-- ================================================= -->
                     <!-- 3. SELECCIÓN DE SERVICIOS -->
                     <!-- ================================================= -->
 
-                    <GridPane hgap="15.0"
+                    <GridPane styleClass="erp-card" hgap="15.0"
                               vgap="12.0">
 
                         <columnConstraints>
@@ -155,14 +154,13 @@
                     </GridPane>
 
 
-                    <Separator/>
 
 
                     <!-- ================================================= -->
                     <!-- 4. FECHA Y TURNOS DISPONIBLES -->
                     <!-- ================================================= -->
 
-                    <GridPane hgap="15.0"
+                    <GridPane styleClass="erp-card" hgap="15.0"
                               vgap="12.0"
                               minHeight="300.0">
 
@@ -176,7 +174,7 @@
                                GridPane.columnSpan="3"
                                styleClass="label-section"/>
 
-                        <DatePicker fx:id="dpFecha"
+                        <DatePicker maxWidth="1.7976931348623157E308" fx:id="dpFecha"
                                     promptText="Seleccionar Fecha"
                                     GridPane.rowIndex="1"
                                     styleClass="combo-box"/>
@@ -200,14 +198,13 @@
                     </GridPane>
 
 
-                    <Separator/>
 
 
                     <!-- ================================================= -->
                     <!-- 5. OBSERVACIONES -->
                     <!-- ================================================= -->
 
-                    <GridPane hgap="15.0"
+                    <GridPane styleClass="erp-card" hgap="15.0"
                               vgap="12.0">
 
                         <columnConstraints>

@@ -5,73 +5,59 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane fx:controller="controllers.GestionTurnosController"
+<AnchorPane fx:controller="controllers.GestionTurnosController" styleClass="erp-root"
             xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            prefHeight="750.0" prefWidth="900.0"
-            stylesheets="@/resource/styles.css">
-
+            stylesheets="@/resource/styles.css"
+            AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
     <children>
-
-        <!-- Encabezado -->
-        <HBox alignment="CENTER_LEFT" prefHeight="100.0"
-              AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <HBox alignment="CENTER_LEFT" spacing="14.0" prefHeight="76.0"
+              AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              styleClass="erp-module-header">
+            <padding><Insets top="10.0" right="24.0" bottom="10.0" left="24.0" /></padding>
             <children>
-                <ImageView fitHeight="86.0" fitWidth="140.0" preserveRatio="true">
-                    <image>
-                        <Image url="@747e63d5-c24e-4b1e-8622-61cde71cd610.png" />
-                    </image>
+                <ImageView fitHeight="56.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
+                    <image><Image url="@747e63d5-c24e-4b1e-8622-61cde71cd610.png" /></image>
                 </ImageView>
-                <VBox spacing="5.0">
+                <VBox alignment="CENTER_LEFT" spacing="2.0">
                     <children>
-                        <Label text="MÓDULO GESTIÓN DE TURNOS" styleClass="label-subsection">
-                            <font>
-                                <Font name="Candara" size="28.0" />
-                            </font>
-                        </Label>
+                        <Label text="PeluqPro" styleClass="label-header" />
+                        <Label text="MÓDULO TURNOS" styleClass="erp-subtitle" />
                     </children>
                 </VBox>
             </children>
-            <padding>
-                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
-            </padding>
         </HBox>
 
-        <!-- Barra superior con botones -->
-        <HBox spacing="10.0" AnchorPane.topAnchor="100.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              prefHeight="50.0" styleClass="toolbar">
+        <VBox prefWidth="210.0" spacing="10.0" styleClass="erp-sidebar"
+              AnchorPane.topAnchor="76.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+            <padding><Insets top="16.0" right="14.0" bottom="16.0" left="14.0" /></padding>
             <children>
-                <Button fx:id="btnAlta" text="REGISTRAR TURNO"
-                        onAction="#cargarSubModulo"
-                        userData="/interface/AltaTurno.fxml"
-                        prefWidth="150.0" styleClass="menu-button" />
-
-                <Button fx:id="btnGestionDiaria" text="AGENDA DIARIA"
-                        onAction="#cargarSubModulo"
-                        userData="/interface/GestionDiaria.fxml"
-                        prefWidth="150.0" styleClass="menu-button" />
-
+                <Label text="GESTIÓN DE TURNOS" styleClass="erp-card-title" />
+                <Button fx:id="btnAlta" text="REGISTRAR TURNO" prefWidth="180.0" prefHeight="42.0" styleClass="menu-button"
+                        onAction="#cargarSubModulo" userData="/interface/AltaTurno.fxml" />
+                <Button fx:id="btnGestionDiaria" text="AGENDA DIARIA" prefWidth="180.0" prefHeight="42.0" styleClass="menu-button"
+                        onAction="#cargarSubModulo" userData="/interface/GestionDiaria.fxml" />
+                <Button fx:id="btnListadoTurnos" text="LISTADO DE TURNOS" prefWidth="180.0" prefHeight="42.0" styleClass="menu-button"
+                        onAction="#cargarSubModulo" userData="/interface/ListadoTurnos.fxml" />
+                <Separator prefWidth="180.0" />
             </children>
-            <padding>
-                <Insets top="5.0" right="10.0" bottom="5.0" left="10.0" />
-            </padding>
-        </HBox>
+        </VBox>
 
-        <!-- Panel de contenido dinámico -->
-        <AnchorPane fx:id="panelContenidoTurnos"
-                    AnchorPane.topAnchor="150.0" AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-                    styleClass="content-panel">
+        <AnchorPane fx:id="panelContenidoTurnos" styleClass="content-panel"
+                    AnchorPane.topAnchor="76.0" AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="0.0">
+            <padding><Insets top="10.0" right="10.0" bottom="10.0" left="10.0" /></padding>
             <children>
-                <Label text="Bienvenido al Módulo de Turnos."
-                       AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0" />
+                <VBox alignment="CENTER" spacing="8.0"
+                      AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                    <children>
+                        <Label text="Gestión de Turnos" styleClass="erp-title" />
+                        <Label text="Seleccione una opción del menú." styleClass="erp-subtitle" />
+                    </children>
+                </VBox>
             </children>
-            <padding>
-                <Insets top="10.0" right="10.0" bottom="10.0" left="10.0" />
-            </padding>
         </AnchorPane>
-
     </children>
 </AnchorPane>

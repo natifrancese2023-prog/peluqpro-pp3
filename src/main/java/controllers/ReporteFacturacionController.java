@@ -142,12 +142,12 @@ public class ReporteFacturacionController {
         }
 
         Map<LocalDate, BigDecimal> facturacion = dao.obtenerFacturacionPorDia(inicio, fin);
-        Map<LocalDate, List<String>> datosPorDia = dao.obtenerMetodosPorFacturaPorDia(inicio, fin);
-        Map<String, Integer> metodos = dao.obtenerUsoMetodosPago(inicio, fin);
+        Map<LocalDate, Map<String, BigDecimal>> importesPorDia =
+                dao.obtenerImportesPorMetodoPagoPorDia(inicio, fin);
 
         cargarGraficoFacturacion(facturacion);
-        cargarGraficoMetodosPago(datosPorDia);
-        cargarGraficoTorta(metodos);
+        cargarGraficoMetodosPago(importesPorDia);
+        cargarGraficoTorta(importesPorDia);
         cargarGraficoFacturacionCliente(detalle);
         cargarResumen(detalle);
 
@@ -168,28 +168,29 @@ public class ReporteFacturacionController {
         graficoFacturacion.getData().add(serie);
     }
 
-    private void cargarGraficoMetodosPago(Map<LocalDate, List<String>> datosPorDia) {
+    private void cargarGraficoMetodosPago(Map<LocalDate, Map<String, BigDecimal>> importesPorDia) {
         graficoMetodosPago.getData().clear();
-        Map<String, Map<LocalDate, Integer>> series = new LinkedHashMap<>();
-        List<LocalDate> fechas = new ArrayList<>(datosPorDia.keySet());
+        Map<String, Map<LocalDate, BigDecimal>> series = new LinkedHashMap<>();
+        List<LocalDate> fechas = new ArrayList<>(importesPorDia.keySet());
         Collections.sort(fechas);
 
         for (LocalDate fecha : fechas) {
-            for (String metodo : datosPorDia.getOrDefault(fecha, Collections.emptyList())) {
-                String categoria = metodo == null || metodo.isBlank() ? "Sin especificar" : metodo;
-                series.computeIfAbsent(categoria, k -> new LinkedHashMap<>())
-                        .merge(fecha, 1, Integer::sum);
+            for (Map.Entry<String, BigDecimal> item :
+                    importesPorDia.getOrDefault(fecha, Collections.emptyMap()).entrySet()) {
+                String metodo = item.getKey() == null || item.getKey().isBlank()
+                        ? "Sin especificar" : item.getKey();
+                series.computeIfAbsent(metodo, k -> new LinkedHashMap<>())
+                        .put(fecha, item.getValue() == null ? BigDecimal.ZERO : item.getValue());
             }
         }
 
-        for (Map.Entry<String, Map<LocalDate, Integer>> entry : series.entrySet()) {
+        for (Map.Entry<String, Map<LocalDate, BigDecimal>> entry : series.entrySet()) {
             XYChart.Series<String, Number> serie = new XYChart.Series<>();
             serie.setName(entry.getKey());
             for (LocalDate fecha : fechas) {
-                int cantidad = entry.getValue().getOrDefault(fecha, 0);
-                if (cantidad > 0) {
-                    serie.getData().add(new XYChart.Data<>(fecha.toString(), cantidad));
-                }
+                BigDecimal importe = entry.getValue().getOrDefault(fecha, BigDecimal.ZERO);
+                serie.getData().add(new XYChart.Data<>(fecha.toString(),
+                        importe.setScale(2, RoundingMode.HALF_UP).doubleValue()));
             }
             if (!serie.getData().isEmpty()) {
                 graficoMetodosPago.getData().add(serie);
@@ -197,12 +198,22 @@ public class ReporteFacturacionController {
         }
     }
 
-    private void cargarGraficoTorta(Map<String, Integer> metodos) {
+    private void cargarGraficoTorta(Map<LocalDate, Map<String, BigDecimal>> importesPorDia) {
         graficoTortaMetodos.getData().clear();
-        metodos.forEach((metodo, cantidad) -> {
-            if (cantidad != null && cantidad > 0) {
+        Map<String, BigDecimal> totales = new LinkedHashMap<>();
+
+        for (Map<String, BigDecimal> porMetodo : importesPorDia.values()) {
+            for (Map.Entry<String, BigDecimal> entry : porMetodo.entrySet()) {
+                String metodo = entry.getKey() == null || entry.getKey().isBlank()
+                        ? "Sin especificar" : entry.getKey();
+                totales.merge(metodo, entry.getValue() == null ? BigDecimal.ZERO : entry.getValue(), BigDecimal::add);
+            }
+        }
+
+        totales.forEach((metodo, importe) -> {
+            if (importe != null && importe.compareTo(BigDecimal.ZERO) > 0) {
                 graficoTortaMetodos.getData().add(new PieChart.Data(
-                        metodo + " (" + cantidad + ")", cantidad));
+                        metodo + " (" + formatearMoneda(importe) + ")", importe.doubleValue()));
             }
         });
     }

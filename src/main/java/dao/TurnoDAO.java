@@ -218,6 +218,73 @@ public class TurnoDAO {
         }
         return turnos;
     }
+    public List<Turno> obtenerTurnosPorPeriodo(LocalDate desde, LocalDate hasta) throws SQLException {
+        List<Turno> turnos = new ArrayList<>();
+        String sql = "SELECT t.id_turno, t.fecha, t.hora_inicio, t.hora_fin, t.motivo_log, " +
+                "c.id_cliente, pc.nombre AS cliente_nombre, pc.apellido AS cliente_apellido, " +
+                "e.id_empleado, pe.nombre AS estilista_nombre, pe.apellido AS estilista_apellido, " +
+                "t.id_estado, s.id_servicio, s.nombre_servicio AS servicio_nombre " +
+                "FROM turno t " +
+                "JOIN cliente c ON t.id_cliente = c.id_cliente " +
+                "JOIN persona pc ON c.id_persona = pc.id_persona " +
+                "JOIN empleado e ON t.id_empleado = e.id_empleado " +
+                "JOIN persona pe ON e.id_persona = pe.id_persona " +
+                "LEFT JOIN turno_servicios ts ON t.id_turno = ts.id_turno " +
+                "LEFT JOIN servicios s ON ts.id_servicio = s.id_servicio " +
+                "WHERE t.fecha BETWEEN ? AND ? ORDER BY t.fecha, t.hora_inicio";
+
+        try (Connection conn = ConexionBD.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, Date.valueOf(desde));
+            ps.setDate(2, Date.valueOf(hasta));
+            try (ResultSet rs = ps.executeQuery()) {
+                Map<Integer, Turno> mapa = new LinkedHashMap<>();
+                while (rs.next()) {
+                    int id = rs.getInt("id_turno");
+                    Turno turno = mapa.get(id);
+                    if (turno == null) {
+                        turno = new Turno();
+                        turno.setIdTurno(id);
+                        turno.setIdCliente(rs.getInt("id_cliente"));
+                        turno.setIdEmpleado(rs.getInt("id_empleado"));
+                        turno.setFecha(rs.getDate("fecha").toLocalDate());
+                        turno.setHoraInicio(rs.getTime("hora_inicio").toLocalTime());
+                        if (rs.getTime("hora_fin") != null) turno.setHoraFin(rs.getTime("hora_fin").toLocalTime());
+                        turno.setMotivoLog(rs.getString("motivo_log"));
+
+                        Cliente cliente = new Cliente();
+                        cliente.setIdCliente(rs.getInt("id_cliente"));
+                        Persona pc = new Persona();
+                        pc.setNombre(rs.getString("cliente_nombre"));
+                        pc.setApellido(rs.getString("cliente_apellido"));
+                        cliente.setPersona(pc);
+                        turno.setCliente(cliente);
+
+                        Empleado empleado = new Empleado();
+                        empleado.setIdEmpleado(rs.getInt("id_empleado"));
+                        empleado.setNombre(rs.getString("estilista_nombre"));
+                        empleado.setApellido(rs.getString("estilista_apellido"));
+                        turno.setEmpleado(empleado);
+
+                        turno.setEstadoTurno(EstadoTurno.buscarPorId(rs.getInt("id_estado")));
+                        mapa.put(id, turno);
+                    }
+                    int idServicio = rs.getInt("id_servicio");
+                    if (!rs.wasNull() && idServicio != 0) {
+                        Servicio servicio = new Servicio();
+                        servicio.setIdServicio(idServicio);
+                        servicio.setNombreServicio(rs.getString("servicio_nombre"));
+                        if (turno.getServicios().stream().noneMatch(x -> x.getIdServicio() == idServicio)) {
+                            turno.addServicio(servicio);
+                        }
+                    }
+                }
+                turnos.addAll(mapa.values());
+            }
+        }
+        return turnos;
+    }
+
     public List<Turno> obtenerTurnosFiltrados(LocalDate fecha, Integer idEmpleado) throws SQLException {
         List<Turno> turnos = new ArrayList<>();
 

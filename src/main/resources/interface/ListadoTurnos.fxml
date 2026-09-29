@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ListadoTurnosController" styleClass="erp-root"
+            stylesheets="@/resource/styles.css" prefWidth="1000" prefHeight="650">
+    <top>
+        <VBox styleClass="erp-page">
+            <Label text="LISTADO DE TURNOS" styleClass="erp-title"/>
+            <VBox styleClass="erp-card">
+                <Label text="PERÍODO" styleClass="erp-card-title"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Desde:"/>
+                    <DatePicker fx:id="fechaDesde"/>
+                    <Label text="Hasta:"/>
+                    <DatePicker fx:id="fechaHasta"/>
+                    <Button text="Generar listado" onAction="#generarListado" styleClass="action-button"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </top>
+    <center>
+        <TableView fx:id="tablaTurnos"><columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+            <BorderPane.margin>
+                <Insets top="0.0" right="24.0" bottom="20.0" left="24.0"/>
+            </BorderPane.margin>
+            <columns>
+                <TableColumn fx:id="colCliente" text="Cliente" prefWidth="180"/>
+                <TableColumn fx:id="colProfesional" text="Profesional" prefWidth="180"/>
+                <TableColumn fx:id="colServicio" text="Servicio" prefWidth="230"/>
+                <TableColumn fx:id="colFecha" text="Fecha" prefWidth="100"/>
+                <TableColumn fx:id="colHora" text="Hora" prefWidth="130"/>
+                <TableColumn fx:id="colEstado" text="Estado" prefWidth="140"/>
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

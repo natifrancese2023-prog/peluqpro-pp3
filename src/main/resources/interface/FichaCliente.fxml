@@ -7,23 +7,20 @@
 <BorderPane xmlns="http://javafx.com/javafx/24.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.FichaClienteController"
+            styleClass="erp-root"
             stylesheets="@/resource/styles.css">
 
     <!-- Sección superior: búsqueda de cliente -->
     <top>
-        <VBox spacing="10">
-            <padding>
-                <!-- Reducimos el margen vertical de 20 a 10 para ganar altura -->
-                <Insets top="10.0" right="20.0" bottom="10.0" left="20.0"/>
-            </padding>
+        <VBox styleClass="erp-page">
             <children>
                 <Label text="Ficha del Cliente" styleClass="titulo-principal"/>
-                <HBox spacing="10" alignment="CENTER_LEFT">
+                <HBox spacing="10" alignment="CENTER_LEFT" styleClass="erp-card">
                     <children>
                         <Label text="Tipo de documento:"/>
-                        <ComboBox fx:id="cmbTipoDocumento" prefWidth="120"/>
+                        <ComboBox fx:id="cmbTipoDocumento" prefWidth="140"/>
                         <Label text="Número:"/>
-                        <TextField fx:id="txtDocumento" promptText="Ingrese documento..." prefWidth="180"/>
+                        <TextField fx:id="txtDocumento" promptText="Ingrese documento..." prefWidth="220"/>
                         <Button text="Buscar" onAction="#buscarCliente" styleClass="boton-buscar"/>
                     </children>
                 </HBox>
@@ -33,41 +30,38 @@
 
     <!-- Sección central: datos del cliente -->
     <center>
-        <!-- Limitamos la altura máxima del GridPane para que no "empuje" los botones hacia afuera -->
-        <GridPane hgap="10" vgap="8" maxHeight="150.0" BorderPane.alignment="TOP_CENTER">
-            <padding>
-                <!-- Ajustamos paddings a 10.0 en el eje vertical -->
-                <Insets top="10.0" right="20.0" bottom="10.0" left="20.0"/>
-            </padding>
+        <GridPane hgap="12" vgap="10" maxHeight="-Infinity" styleClass="erp-card" BorderPane.alignment="TOP_CENTER">
+            <BorderPane.margin>
+                <Insets top="0.0" right="24.0" bottom="0.0" left="24.0"/>
+            </BorderPane.margin>
             <columnConstraints>
-                <ColumnConstraints minWidth="100.0" prefWidth="120.0" />
+                <ColumnConstraints minWidth="100.0" prefWidth="130.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
             </columnConstraints>
             <children>
-                <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtNombre" editable="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Nombre:" styleClass="erp-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtNombre" editable="false" styleClass="erp-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                <Label text="Teléfono:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtTelefono" editable="false" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Teléfono:" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtTelefono" editable="false" styleClass="erp-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                <Label text="Fecha de Alta:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtFechaAlta" editable="false" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Fecha de Alta:" styleClass="erp-field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtFechaAlta" editable="false" styleClass="erp-value" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
             </children>
         </GridPane>
     </center>
 
     <!-- Sección inferior: botones de acción -->
     <bottom>
-        <HBox spacing="12" alignment="CENTER">
+        <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="erp-action-bar">
             <padding>
-                <!-- Reducimos el espacio superior para acercar los botones al formulario -->
-                <Insets top="10.0" right="20.0" bottom="15.0" left="20.0"/>
+                <Insets top="14.0" right="24.0" bottom="20.0" left="24.0"/>
             </padding>
             <children>
-                <Button fx:id="btnModificar" text="Modificar" onAction="#modificarCliente" styleClass="boton-accion"/>
-                <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarCliente" styleClass="boton-accion"/>
+                <Button fx:id="btnModificar" text="Modificar" onAction="#modificarCliente" styleClass="boton-accion action-button"/>
+                <Button fx:id="btnEliminar" text="Desactivar" onAction="#eliminarCliente" styleClass="boton-accion danger-button"/>
                 <Button fx:id="btnVerHistorial" text="Ver Historial" onAction="#verHistorial" styleClass="boton-accion"/>
-                <Button fx:id="btnRegistrarVisita" text="Registrar Visita" onAction="#registrarVisita" styleClass="boton-accion"/>
+                <Button fx:id="btnRegistrarVisita" text="Registrar Visita" onAction="#registrarVisita" styleClass="boton-accion action-button"/>
             </children>
         </HBox>
     </bottom>

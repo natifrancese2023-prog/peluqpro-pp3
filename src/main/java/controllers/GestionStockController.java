@@ -48,6 +48,10 @@ public class GestionStockController {
     private Proveedor proveedorEditando;
 
     @FXML private Button btnProductoGuardar,btnProductoEstado,btnProveedorGuardar;
+    @FXML private javafx.scene.layout.VBox vistaProductos;
+    @FXML private javafx.scene.layout.VBox vistaConsumo;
+    @FXML private javafx.scene.layout.VBox vistaProveedores;
+    @FXML private javafx.scene.layout.VBox vistaCompras;
 
     @FXML
     private void initialize(){
@@ -57,6 +61,7 @@ public class GestionStockController {
         tvProveedores.getSelectionModel().selectedItemProperty().addListener((obs,old,v)->seleccionarProveedor(v));
         cbConsumoProducto.valueProperty().addListener((obs,old,v)->actualizarStockConsumo());
         cargarTodo();
+        mostrarProductos();
     }
 
     private void configurarTablas(){
@@ -169,6 +174,23 @@ public class GestionStockController {
             txtCompraCantidad.clear();txtCompraPrecio.clear();cargarTodo();mostrarInfo("Compra registrada. El stock fue incrementado.");
         }catch(NumberFormatException e){mostrarError("Cantidad y precio deben tener un formato válido.");}catch(Exception e){mostrarError(e.getMessage());}
     }
+
+    // Navegación visual del módulo: los botones laterales muestran la vista existente.
+    private void mostrarVista(javafx.scene.layout.VBox vista) {
+        vistaProductos.setVisible(vista == vistaProductos);
+        vistaProductos.setManaged(vista == vistaProductos);
+        vistaConsumo.setVisible(vista == vistaConsumo);
+        vistaConsumo.setManaged(vista == vistaConsumo);
+        vistaProveedores.setVisible(vista == vistaProveedores);
+        vistaProveedores.setManaged(vista == vistaProveedores);
+        vistaCompras.setVisible(vista == vistaCompras);
+        vistaCompras.setManaged(vista == vistaCompras);
+    }
+
+    @FXML private void mostrarProductos(){ mostrarVista(vistaProductos); }
+    @FXML private void mostrarConsumo(){ mostrarVista(vistaConsumo); }
+    @FXML private void mostrarProveedores(){ mostrarVista(vistaProveedores); }
+    @FXML private void mostrarCompras(){ mostrarVista(vistaCompras); }
 
     @FXML private void refrescar(){cargarTodo();}
     private Usuario usuarioActual(){Usuario u=SesionManager.getInstance().getUsuarioLogueado();if(u==null)throw new IllegalStateException("No hay un usuario con sesión iniciada.");return u;}

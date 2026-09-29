@@ -3,32 +3,24 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0"
+<AnchorPane styleClass="erp-root" prefHeight="600.0" prefWidth="900.0"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.GestionDiariaController"
             stylesheets="@/resource/styles.css">
     <children>
-        <VBox spacing="10.0" AnchorPane.topAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="14.0">
+        <VBox styleClass="erp-page" AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0.0">
             <children>
-                <Label text="📅 GESTIÓN DIARIA DE TURNOS" textFill="#0d47a1">
-                    <font>
-                        <Font name="System Bold" size="20.0" />
-                    </font>
-                </Label>
+                <Label text="📅 GESTIÓN DIARIA DE TURNOS" styleClass="erp-title" />
 
-                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="erp-card">
                     <children>
                         <Label text="Seleccionar Fecha:" />
                         <DatePicker fx:id="dpFecha" promptText="Seleccionar Fecha" />
                         <Label text="Estilista:" />
-                        <ComboBox fx:id="cbEstilistaFiltro" prefWidth="150.0" promptText="Mostrar Todos" />
-                        <Button text="🔎 Recargar Agenda" onAction="#cargarAgenda" />
+                        <ComboBox fx:id="cbEstilistaFiltro" prefWidth="190.0" promptText="Mostrar Todos" />
+                        <Button text="🔎 Recargar Agenda" onAction="#cargarAgenda" styleClass="action-button" />
                     </children>
-                    <VBox.margin>
-                        <Insets top="10.0" />
-                    </VBox.margin>
                 </HBox>
 
                 <TableView fx:id="tvTurnos" VBox.vgrow="ALWAYS">
@@ -46,30 +38,16 @@
                     </columnResizePolicy>
                 </TableView>
 
-                <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="erp-action-bar">
                     <children>
                         <Button fx:id="btnConfirmar" text="✔️ Confirmar Turno" onAction="#handleConfirmarTurno"
-                                style="-fx-background-color: #1976d2;" textFill="WHITE" prefHeight="30.0">
-                            <font>
-                                <Font name="System Bold" size="13.0" />
-                            </font>
-                        </Button>
-
-
-
+                                styleClass="action-button" />
 
                         <Button fx:id="btnCancelar" text="❌ Cancelar Turno" onAction="#handleCancelarTurno"
-                                style="-fx-background-color: #d32f2f;" textFill="WHITE" prefHeight="30.0">
-                            <font>
-                                <Font name="System Bold" size="13.0" />
-                            </font>
-                        </Button>
+                                styleClass="danger-button" />
                     </children>
                 </HBox>
             </children>
-            <padding>
-                <Insets top="5.0" right="5.0" bottom="5.0" left="5.0" />
-            </padding>
         </VBox>
     </children>
 </AnchorPane>

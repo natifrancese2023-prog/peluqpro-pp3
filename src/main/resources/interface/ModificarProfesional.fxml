@@ -9,6 +9,8 @@
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.ModificarProfesionalController"
+            styleClass="erp-root"
+            stylesheets="@/resource/styles.css"
             prefWidth="900.0"
             prefHeight="720.0"
             minWidth="800.0"
@@ -28,7 +30,7 @@
 
             <content>
 
-                <VBox spacing="12.0"
+                <VBox styleClass="erp-page"
                       fillWidth="true">
 
                     <padding>
@@ -39,12 +41,14 @@
                     </padding>
 
 
+                    <Label text="MODIFICAR PROFESIONAL" styleClass="erp-title"/>
+
                     <!-- ================================================= -->
                     <!-- DATOS PERSONALES -->
                     <!-- ================================================= -->
 
-                    <Label text="DATOS PERSONALES"
-                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <VBox styleClass="erp-card">
+<Label text="DATOS PERSONALES" styleClass="label-section"/>
 
                     <GridPane hgap="10"
                               vgap="8">
@@ -108,9 +112,10 @@
                     <!-- ================================================= -->
                     <!-- DOCUMENTACIÓN -->
                     <!-- ================================================= -->
+</VBox>
 
-                    <Label text="DOCUMENTACIÓN"
-                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <VBox styleClass="erp-card">
+<Label text="DOCUMENTACIÓN" styleClass="label-section"/>
 
                     <GridPane hgap="10"
                               vgap="8">
@@ -157,9 +162,10 @@
                     <!-- ================================================= -->
                     <!-- DOMICILIO -->
                     <!-- ================================================= -->
+</VBox>
 
-                    <Label text="DOMICILIO"
-                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <VBox styleClass="erp-card">
+<Label text="DOMICILIO" styleClass="label-section"/>
 
                     <GridPane hgap="10"
                               vgap="8">
@@ -233,9 +239,10 @@
                     <!-- ================================================= -->
                     <!-- DATOS PROFESIONALES -->
                     <!-- ================================================= -->
+</VBox>
 
-                    <Label text="DATOS PROFESIONALES"
-                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <VBox styleClass="erp-card">
+<Label text="DATOS PROFESIONALES" styleClass="label-section"/>
 
                     <GridPane hgap="10"
                               vgap="8">
@@ -292,9 +299,10 @@
                     <!-- ================================================= -->
                     <!-- ESPECIALIDADES -->
                     <!-- ================================================= -->
+</VBox>
 
-                    <Label text="ESPECIALIDADES"
-                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <VBox styleClass="erp-card">
+<Label text="ESPECIALIDADES" styleClass="label-section"/>
 
                     <HBox spacing="8">
 
@@ -302,7 +310,7 @@
                                   promptText="Seleccionar especialidad"
                                   prefWidth="280"/>
 
-                        <Button text="Agregar"
+                        <Button text="Agregar" styleClass="action-button"
                                 onAction="#agregarEspecialidad"/>
 
                         <Button text="Quitar"
@@ -312,23 +320,25 @@
 
 
                     <ListView fx:id="lstEspecialidades"
-                              prefHeight="65.0"
-                              minHeight="65.0"
-                              maxHeight="65.0"/>
+                              prefHeight="100.0"
+                              minHeight="100.0"
+                              maxHeight="100.0"/>
 
 
                     <!-- ================================================= -->
                     <!-- DISPONIBILIDAD -->
                     <!-- ================================================= -->
+</VBox>
 
-                    <Label text="DISPONIBILIDAD"
-                           style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                    <VBox styleClass="erp-card">
+<Label text="DISPONIBILIDAD" styleClass="label-section"/>
 
 
                     <TableView fx:id="tblDisponibilidades"
-                               prefHeight="125.0"
-                               minHeight="125.0"
-                               maxHeight="125.0">
+                               prefHeight="150.0"
+                               minHeight="150.0"
+                               maxHeight="150.0">
+<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
 
                         <columns>
 
@@ -383,7 +393,7 @@
 
                     <HBox spacing="8">
 
-                        <Button text="Agregar disponibilidad"
+                        <Button text="Agregar disponibilidad" styleClass="action-button"
                                 onAction="#agregarDisponibilidad"/>
 
                         <Button text="Modificar seleccionada"
@@ -393,8 +403,9 @@
                                 onAction="#quitarDisponibilidad"/>
 
                     </HBox>
+</VBox>
 
-                </VBox>
+                    </VBox>
 
             </content>
 
@@ -414,13 +425,13 @@
               prefHeight="58.0"
               minHeight="58.0"
               maxHeight="58.0"
-              style="-fx-background-color: #f4f4f4; -fx-border-color: #d0d0d0; -fx-border-width: 1 0 0 0;">
+              styleClass="erp-action-bar">
 
             <padding>
                 <Insets top="10"
-                        right="20"
+                        right="24"
                         bottom="10"
-                        left="20"/>
+                        left="24"/>
             </padding>
 
             <Button text="Cancelar"
@@ -428,7 +439,7 @@
                     prefHeight="35"
                     onAction="#cancelar"/>
 
-            <Button text="Guardar cambios"
+            <Button text="Guardar cambios" styleClass="action-button"
                     prefWidth="150"
                     prefHeight="35"
                     defaultButton="true"

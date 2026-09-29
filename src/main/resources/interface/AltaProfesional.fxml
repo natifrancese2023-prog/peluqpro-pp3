@@ -9,13 +9,16 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.AltaProfesionalController">
+            fx:controller="controllers.AltaProfesionalController"
+            styleClass="erp-root"
+            stylesheets="@/resource/styles.css">
 
     <children>
 
@@ -30,7 +33,7 @@
 
             <content>
 
-                <VBox spacing="12.0"
+                <VBox styleClass="erp-page"
                       fillWidth="true">
 
                     <children>
@@ -44,11 +47,13 @@
                         <!-- DATOS PERSONALES -->
                         <!-- ========================= -->
 
-                        <Label text="DATOS PERSONALES"
+                        <VBox styleClass="erp-card">
+<Label text="DATOS PERSONALES"
                                styleClass="label-section"/>
 
                         <GridPane hgap="10.0"
                                   vgap="10.0">
+<columnConstraints><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/></columnConstraints>
 
                             <children>
 
@@ -101,12 +106,15 @@
                         <!-- ========================= -->
                         <!-- DOCUMENTACIÓN -->
                         <!-- ========================= -->
+</VBox>
 
-                        <Label text="DOCUMENTACIÓN"
+                        <VBox styleClass="erp-card">
+<Label text="DOCUMENTACIÓN"
                                styleClass="label-section"/>
 
                         <GridPane hgap="10.0"
                                   vgap="10.0">
+<columnConstraints><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/></columnConstraints>
 
                             <children>
 
@@ -114,7 +122,7 @@
                                        GridPane.columnIndex="0"
                                        GridPane.rowIndex="0"/>
 
-                                <ComboBox fx:id="cmbTipoDocumento"
+                                <ComboBox maxWidth="1.7976931348623157E308" fx:id="cmbTipoDocumento"
                                           promptText="Seleccionar"
                                           styleClass="combo-box"
                                           prefWidth="200.0"
@@ -140,12 +148,15 @@
                         <!-- ========================= -->
                         <!-- DOMICILIO -->
                         <!-- ========================= -->
+</VBox>
 
-                        <Label text="DOMICILIO"
+                        <VBox styleClass="erp-card">
+<Label text="DOMICILIO"
                                styleClass="label-section"/>
 
                         <GridPane hgap="10.0"
                                   vgap="10.0">
+<columnConstraints><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/></columnConstraints>
 
                             <children>
 
@@ -153,7 +164,7 @@
                                        GridPane.columnIndex="0"
                                        GridPane.rowIndex="0"/>
 
-                                <ComboBox fx:id="cmbProvincia"
+                                <ComboBox maxWidth="1.7976931348623157E308" fx:id="cmbProvincia"
                                           promptText="Seleccionar"
                                           styleClass="combo-box"
                                           prefWidth="200.0"
@@ -165,7 +176,7 @@
                                        GridPane.columnIndex="2"
                                        GridPane.rowIndex="0"/>
 
-                                <ComboBox fx:id="cmbCiudad"
+                                <ComboBox maxWidth="1.7976931348623157E308" fx:id="cmbCiudad"
                                           promptText="Seleccionar"
                                           styleClass="combo-box"
                                           prefWidth="200.0"
@@ -177,7 +188,7 @@
                                        GridPane.columnIndex="0"
                                        GridPane.rowIndex="1"/>
 
-                                <ComboBox fx:id="cmbBarrio"
+                                <ComboBox maxWidth="1.7976931348623157E308" fx:id="cmbBarrio"
                                           promptText="Seleccionar"
                                           styleClass="combo-box"
                                           prefWidth="200.0"
@@ -214,12 +225,15 @@
                         <!-- ========================= -->
                         <!-- DATOS PROFESIONALES -->
                         <!-- ========================= -->
+</VBox>
 
-                        <Label text="DATOS PROFESIONALES"
+                        <VBox styleClass="erp-card">
+<Label text="DATOS PROFESIONALES"
                                styleClass="label-section"/>
 
                         <GridPane hgap="10.0"
                                   vgap="10.0">
+<columnConstraints><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/><ColumnConstraints minWidth="110" prefWidth="130"/><ColumnConstraints hgrow="ALWAYS" minWidth="140"/></columnConstraints>
 
                             <children>
 
@@ -227,7 +241,7 @@
                                        GridPane.columnIndex="0"
                                        GridPane.rowIndex="0"/>
 
-                                <DatePicker fx:id="dpFechaIngreso"
+                                <DatePicker maxWidth="1.7976931348623157E308" fx:id="dpFechaIngreso"
                                             prefWidth="200.0"
                                             GridPane.columnIndex="1"
                                             GridPane.rowIndex="0"/>
@@ -251,8 +265,10 @@
                         <!-- ========================= -->
                         <!-- ESPECIALIDADES -->
                         <!-- ========================= -->
+</VBox>
 
-                        <Label text="ESPECIALIDADES"
+                        <VBox styleClass="erp-card">
+<Label text="ESPECIALIDADES"
                                styleClass="label-section"/>
 
                         <HBox spacing="10.0">
@@ -276,15 +292,17 @@
 
 
                         <ListView fx:id="lstEspecialidades"
-                                  prefHeight="80.0"
-                                  maxHeight="80.0"/>
+                                  prefHeight="110.0"
+                                  maxHeight="110.0"/>
 
 
                         <!-- ========================= -->
                         <!-- DISPONIBILIDAD -->
                         <!-- ========================= -->
+</VBox>
 
-                        <Label text="DISPONIBILIDAD"
+                        <VBox styleClass="erp-card">
+<Label text="DISPONIBILIDAD"
                                styleClass="label-section"/>
 
                         <HBox spacing="10.0">
@@ -318,15 +336,15 @@
 
 
                         <ListView fx:id="lstDisponibilidades"
-                                  prefHeight="80.0"
-                                  maxHeight="80.0"/>
-
+                                  prefHeight="110.0"
+                                  maxHeight="110.0"/>
+</VBox>
 
                         <!-- ========================= -->
                         <!-- BOTONES -->
                         <!-- ========================= -->
 
-                        <HBox spacing="10.0">
+                        <HBox spacing="10.0" alignment="CENTER_RIGHT" styleClass="erp-action-bar">
 
                             <children>
 
@@ -339,7 +357,7 @@
                                 <Button fx:id="btnLimpiar"
                                         text="LIMPIAR"
                                         prefWidth="120.0"
-                                        styleClass="action-button"
+                                        styleClass="action-button erp-neutral"
                                         onAction="#limpiarFormulario"/>
 
                             </children>

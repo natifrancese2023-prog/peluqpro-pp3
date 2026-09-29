@@ -2,29 +2,38 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" style="-fx-padding: 20;" xmlns:fx="http://javafx.com/fxml"
+<VBox styleClass="erp-root erp-page" stylesheets="@/resource/styles.css" xmlns:fx="http://javafx.com/fxml"
       fx:controller="controllers.ListadoFacturasController">
 
-    <!-- Filtro por rango de fechas -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Desde:"/>
-        <DatePicker fx:id="dpDesde"/>
-        <Label text="Hasta:"/>
-        <DatePicker fx:id="dpHasta"/>
-        <Button fx:id="btnBuscar" text="Buscar" onAction="#handleBuscar"/>
-    </HBox>
+    <Label text="LISTADO DE FACTURAS" styleClass="erp-title"/>
 
-    <!-- Filtros secundarios -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
-        <Label text="Cliente:"/>
-        <TextField fx:id="txtFiltroCliente" promptText="Nombre del cliente"
-                   onKeyReleased="#handleAplicarFiltros" prefWidth="200"/>
-        <Label text="Método de pago:"/>
-        <ComboBox fx:id="cmbFiltroMetodo" onAction="#handleAplicarFiltros"/>
-    </HBox>
+    <!-- Filtros -->
+    <VBox styleClass="erp-card">
+        <Label text="FILTROS" styleClass="erp-card-title"/>
+
+        <!-- Filtro por rango de fechas -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Desde:"/>
+            <DatePicker fx:id="dpDesde"/>
+            <Label text="Hasta:"/>
+            <DatePicker fx:id="dpHasta"/>
+            <Button fx:id="btnBuscar" text="Buscar" onAction="#handleBuscar" styleClass="action-button"/>
+        </HBox>
+
+        <!-- Filtros secundarios -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Cliente:"/>
+            <TextField fx:id="txtFiltroCliente" promptText="DNI Cliente"
+                       onKeyReleased="#handleAplicarFiltros" prefWidth="220"/>
+            <Label text="Método de pago:"/>
+            <ComboBox fx:id="cmbFiltroMetodo" onAction="#handleAplicarFiltros"/>
+            <Label text="Filtrar por estado:"/>
+            <ComboBox fx:id="cmbFiltroEstado" onAction="#handleFiltrarPorEstado"/>
+        </HBox>
+    </VBox>
 
     <!-- Tabla -->
-    <TableView fx:id="tblFacturas" VBox.vgrow="ALWAYS">
+    <TableView fx:id="tblFacturas" VBox.vgrow="ALWAYS"><columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
         <columns>
             <TableColumn fx:id="colId" text="N° Factura" prefWidth="90"/>
             <TableColumn fx:id="colFecha" text="Fecha" prefWidth="100"/>
@@ -35,17 +44,11 @@
         </columns>
     </TableView>
 
-    <!-- Botón PDF -->
-    <HBox alignment="CENTER_RIGHT">
-        <Button fx:id="btnVerPDF" text="📄 Ver Factura PDF" onAction="#handleVerPDF"/>
-    </HBox>
     <!-- Acciones sobre factura -->
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Button fx:id="btnMarcarPagada" text="💰 Cobrar" onAction="#handleMarcarPagada"/>
-        <Button fx:id="btnCancelarFactura" text="✖ Anular" onAction="#handleCancelarFactura"/>
-        <Label text="Filtrar por estado:"/>
-        <ComboBox fx:id="cmbFiltroEstado" onAction="#handleFiltrarPorEstado"/>
+    <HBox spacing="10" alignment="CENTER_RIGHT" styleClass="erp-action-bar">
+        <Button fx:id="btnVerPDF" text="📄 Ver Factura PDF" onAction="#handleVerPDF" styleClass="erp-outline"/>
+        <Button fx:id="btnMarcarPagada" text="💰 Cobrar" onAction="#handleMarcarPagada" styleClass="action-button"/>
+        <Button fx:id="btnCancelarFactura" text="✖ Anular" onAction="#handleCancelarFactura" styleClass="danger-button"/>
     </HBox>
-
 
 </VBox>

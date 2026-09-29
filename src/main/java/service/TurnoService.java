@@ -193,6 +193,10 @@ public class TurnoService {
         return visitaService.obtenerVisitaPorTurno(idTurno);
     }
 
+    public List<Turno> obtenerTurnosPorPeriodo(LocalDate desde, LocalDate hasta) throws SQLException {
+        return turnoDAO.obtenerTurnosPorPeriodo(desde, hasta);
+    }
+
     public List<Turno> obtenerAgenda(LocalDate fecha, Integer idEmpleado) throws SQLException {
         return turnoDAO.obtenerTurnosFiltrados(fecha, idEmpleado);
     }

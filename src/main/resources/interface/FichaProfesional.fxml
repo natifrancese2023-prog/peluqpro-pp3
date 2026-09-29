@@ -1,40 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.FichaProfesionalController"
+            styleClass="erp-root"
             stylesheets="@/resource/styles.css"
-            prefWidth="1150.0"
+            prefWidth="1000.0"
             prefHeight="720.0">
-
     <top>
-        <VBox spacing="12.0">
-            <padding>
-                <Insets top="18.0" right="28.0" bottom="12.0" left="28.0"/>
-            </padding>
+        <VBox styleClass="erp-page">
             <children>
-                <Label text="FICHA DEL PROFESIONAL"
-                       styleClass="titulo-principal"/>
-
-                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label text="FICHA DEL PROFESIONAL" styleClass="titulo-principal"/>
+                <HBox spacing="10.0" alignment="CENTER_LEFT" styleClass="erp-card">
                     <Label text="Tipo de documento:"/>
-                    <ComboBox fx:id="cmbTipoDocumento" prefWidth="145.0"/>
+                    <ComboBox fx:id="cmbTipoDocumento" prefWidth="160.0"/>
                     <Label text="Número:"/>
                     <TextField fx:id="txtDocumento"
                                promptText="Ingrese documento..."
-                               prefWidth="190.0"/>
+                               prefWidth="220.0"/>
                     <Button text="Buscar"
                             onAction="#buscarProfesional"
                             styleClass="boton-buscar"/>
@@ -42,135 +27,88 @@
             </children>
         </VBox>
     </top>
-
     <center>
         <ScrollPane fitToWidth="true"
                     hbarPolicy="NEVER"
-                    vbarPolicy="AS_NEEDED"
-                    style="-fx-background-color: transparent; -fx-border-color: transparent;">
+                    vbarPolicy="AS_NEEDED">
             <content>
-                <VBox spacing="16.0">
+                <VBox spacing="14.0">
                     <padding>
-                        <Insets top="8.0" right="28.0" bottom="12.0" left="28.0"/>
+                        <Insets top="0.0" right="24.0" bottom="12.0" left="24.0"/>
                     </padding>
-
                     <children>
-
-                        <!-- DATOS PERSONALES -->
-                        <Label text="DATOS PERSONALES" styleClass="label-section"/>
-                        <GridPane hgap="24.0" vgap="9.0">
-                            <children>
-                                <Label text="Nombre" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                                <TextField fx:id="txtNombre" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                                <Label text="Apellido" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                                <TextField fx:id="txtApellido" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="3"/>
-
-                                <Label text="Teléfono" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                                <TextField fx:id="txtTelefono" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                                <Label text="Email" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-                                <TextField fx:id="txtEmail" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="1" GridPane.columnIndex="3"/>
-                            </children>
-                        </GridPane>
-
-                        <!-- DOMICILIO -->
-                        <Label text="DOMICILIO" styleClass="label-section"/>
-                        <GridPane hgap="24.0" vgap="9.0">
-                            <children>
-                                <Label text="Provincia" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                                <TextField fx:id="txtProvincia" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                                <Label text="Ciudad" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                                <TextField fx:id="txtCiudad" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="3"/>
-
-                                <Label text="Barrio" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                                <TextField fx:id="txtBarrio" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                                <Label text="Calle" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-                                <TextField fx:id="txtCalle" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="1" GridPane.columnIndex="3"/>
-
-                                <Label text="Número" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                                <TextField fx:id="txtNumero" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-                            </children>
-                        </GridPane>
-
-                        <!-- DATOS PROFESIONALES -->
-                        <Label text="DATOS PROFESIONALES" styleClass="label-section"/>
-                        <GridPane hgap="24.0" vgap="9.0">
-                            <children>
-                                <Label text="Fecha de ingreso" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                                <TextField fx:id="txtFechaIngreso" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-
-                                <Label text="Comisión" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
-                                <TextField fx:id="txtComision" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="0" GridPane.columnIndex="3"/>
-
-                                <Label text="Rol" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                                <TextField fx:id="txtRol" editable="false" focusTraversable="false"
-                                           style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;"
-                                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                                <Label text="Estado" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
-                                <Label fx:id="lblEstado" text="-"
-                                       style="-fx-font-weight: bold;"
-                                       GridPane.rowIndex="1" GridPane.columnIndex="3"/>
-                            </children>
-                        </GridPane>
-
-                        <!-- ESPECIALIDADES -->
-                        <Label text="ESPECIALIDADES" styleClass="label-section"/>
-                        <ListView fx:id="lstEspecialidades"
-                                  prefHeight="55.0"
-                                  maxHeight="80.0"
-                                  focusTraversable="false"
-                                  style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
-
-                        <!-- DISPONIBILIDADES -->
-                        <Label text="DISPONIBILIDADES" styleClass="label-section"/>
-                        <ListView fx:id="lstDisponibilidades"
-                                  prefHeight="105.0"
-                                  maxHeight="130.0"
-                                  focusTraversable="false"
-                                  style="-fx-background-color: transparent; -fx-border-color: transparent;"/>
+                        <VBox styleClass="erp-card">
+                            <Label text="DATOS PERSONALES" styleClass="label-section"/>
+                            <GridPane hgap="24.0" vgap="10.0">
+                                <columnConstraints><ColumnConstraints minWidth="110.0" prefWidth="140.0"/><ColumnConstraints hgrow="ALWAYS" minWidth="120.0"/><ColumnConstraints minWidth="110.0" prefWidth="140.0"/><ColumnConstraints hgrow="ALWAYS" minWidth="120.0"/></columnConstraints>
+                                <children>
+                                    <Label text="Nombre" styleClass="erp-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="txtNombre" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                    <Label text="Apellido" styleClass="erp-field-label" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                                    <TextField fx:id="txtApellido" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+                                    <Label text="Teléfono" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="txtTelefono" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                    <Label text="Email" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                                    <TextField fx:id="txtEmail" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+                                </children>
+                            </GridPane>
+                        </VBox>
+                        <VBox styleClass="erp-card">
+                            <Label text="DOMICILIO" styleClass="label-section"/>
+                            <GridPane hgap="24.0" vgap="10.0">
+                                <columnConstraints><ColumnConstraints minWidth="110.0" prefWidth="140.0"/><ColumnConstraints hgrow="ALWAYS" minWidth="120.0"/><ColumnConstraints minWidth="110.0" prefWidth="140.0"/><ColumnConstraints hgrow="ALWAYS" minWidth="120.0"/></columnConstraints>
+                                <children>
+                                    <Label text="Provincia" styleClass="erp-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="txtProvincia" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                    <Label text="Ciudad" styleClass="erp-field-label" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                                    <TextField fx:id="txtCiudad" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+                                    <Label text="Barrio" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="txtBarrio" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                    <Label text="Calle" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                                    <TextField fx:id="txtCalle" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+                                    <Label text="Número" styleClass="erp-field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="txtNumero" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                </children>
+                            </GridPane>
+                        </VBox>
+                        <VBox styleClass="erp-card">
+                            <Label text="DATOS PROFESIONALES" styleClass="label-section"/>
+                            <GridPane hgap="24.0" vgap="10.0">
+                                <columnConstraints><ColumnConstraints minWidth="110.0" prefWidth="140.0"/><ColumnConstraints hgrow="ALWAYS" minWidth="120.0"/><ColumnConstraints minWidth="110.0" prefWidth="140.0"/><ColumnConstraints hgrow="ALWAYS" minWidth="120.0"/></columnConstraints>
+                                <children>
+                                    <Label text="Fecha de ingreso" styleClass="erp-field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="txtFechaIngreso" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                                    <Label text="Comisión" styleClass="erp-field-label" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                                    <TextField fx:id="txtComision" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+                                    <Label text="Rol" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                    <TextField fx:id="txtRol" editable="false" focusTraversable="false" styleClass="erp-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                    <Label text="Estado" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                                    <Label fx:id="lblEstado" text="-" styleClass="erp-field-label" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+                                </children>
+                            </GridPane>
+                        </VBox>
+                        <VBox styleClass="erp-card">
+                            <Label text="ESPECIALIDADES" styleClass="label-section"/>
+                            <ListView fx:id="lstEspecialidades" prefHeight="55.0" maxHeight="80.0" focusTraversable="false" styleClass="erp-list-plain"/>
+                        </VBox>
+                        <VBox styleClass="erp-card">
+                            <Label text="DISPONIBILIDADES" styleClass="label-section"/>
+                            <ListView fx:id="lstDisponibilidades" prefHeight="105.0" maxHeight="130.0" focusTraversable="false" styleClass="erp-list-plain"/>
+                        </VBox>
                     </children>
                 </VBox>
             </content>
         </ScrollPane>
     </center>
-
     <bottom>
-        <HBox spacing="12.0" alignment="CENTER">
+        <HBox spacing="10.0" alignment="CENTER_RIGHT" styleClass="erp-action-bar">
             <padding>
-                <Insets top="10.0" right="20.0" bottom="15.0" left="20.0"/>
+                <Insets top="10.0" right="24.0" bottom="20.0" left="24.0"/>
             </padding>
             <children>
-                <Button fx:id="btnModificar" text="Modificar" onAction="#modificarProfesional" styleClass="boton-accion"/>
+                <Button fx:id="btnModificar" text="Modificar" onAction="#modificarProfesional" styleClass="boton-accion action-button"/>
                 <Button fx:id="btnEstado" text="Desactivar" onAction="#cambiarEstado" styleClass="boton-accion"/>
                 <Button fx:id="btnComisiones" text="Ver Comisiones" onAction="#verComisiones" styleClass="boton-accion"/>
-                <Button fx:id="btnProductividad" text="Productividad" styleClass="boton-accion"/>
-
             </children>
         </HBox>
     </bottom>

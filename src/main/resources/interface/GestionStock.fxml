@@ -2,52 +2,83 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GestionStockController" stylesheets="@/resource/styles.css">
- <children><VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
-  <Label text="PRODUCTOS, STOCK Y PROVEEDORES"><font><Font name="System Bold" size="22"/></font></Label>
-  <TabPane VBox.vgrow="ALWAYS">
-   <tabs>
-    <Tab text="Productos y stock" closable="false"><content><VBox spacing="8"><padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
-      <GridPane hgap="8" vgap="8">
+<AnchorPane styleClass="erp-root" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.GestionStockController" stylesheets="@/resource/styles.css">
+ <children><HBox styleClass="erp-module-header" alignment="CENTER_LEFT" spacing="14.0" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+  <padding><Insets top="10" right="24" bottom="10" left="24"/></padding>
+  <children>
+   <VBox alignment="CENTER_LEFT" spacing="2.0">
+    <Label text="PeluqPro" styleClass="label-header"/>
+    <Label text="MÓDULO PRODUCTOS Y STOCK" styleClass="erp-subtitle"/>
+   </VBox>
+  </children>
+ </HBox>
+ <VBox styleClass="erp-sidebar" prefWidth="210.0" spacing="10.0" AnchorPane.topAnchor="76.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+  <padding><Insets top="16" right="14" bottom="16" left="14"/></padding>
+  <children>
+   <Label text="PRODUCTOS Y STOCK" styleClass="erp-card-title"/>
+   <Button text="PRODUCTOS" prefWidth="180.0" prefHeight="42.0" styleClass="menu-button" onAction="#mostrarProductos"/>
+   <Button text="CONSUMO / BAJA" prefWidth="180.0" prefHeight="42.0" styleClass="menu-button" onAction="#mostrarConsumo"/>
+   <Button text="PROVEEDORES" prefWidth="180.0" prefHeight="42.0" styleClass="menu-button" onAction="#mostrarProveedores"/>
+   <Button text="COMPRAS" prefWidth="180.0" prefHeight="42.0" styleClass="menu-button" onAction="#mostrarCompras"/>
+   <Separator prefWidth="180.0"/>
+  </children>
+ </VBox>
+ <VBox styleClass="erp-page" AnchorPane.topAnchor="76.0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="0">
+  <StackPane VBox.vgrow="ALWAYS">
+   <children>
+    <VBox fx:id="vistaProductos" spacing="14"><padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+      <GridPane hgap="12" vgap="10">
+       <columnConstraints>
+        <ColumnConstraints minWidth="100" prefWidth="110"/><ColumnConstraints hgrow="ALWAYS" minWidth="120"/><ColumnConstraints minWidth="100" prefWidth="110"/><ColumnConstraints hgrow="ALWAYS" minWidth="120"/>
+       </columnConstraints>
        <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/><TextField fx:id="txtProductoNombre" promptText="Ej. Shampoo" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
        <Label text="Descripción:" GridPane.rowIndex="0" GridPane.columnIndex="2"/><TextField fx:id="txtProductoDescripcion" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
        <Label text="Stock inicial:" GridPane.rowIndex="1" GridPane.columnIndex="0"/><TextField fx:id="txtStockInicial" text="0" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
        <Label text="Stock mínimo:" GridPane.rowIndex="1" GridPane.columnIndex="2"/><TextField fx:id="txtStockMinimo" text="0" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
        <CheckBox fx:id="chkProductoActivo" text="Activo" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-       <HBox spacing="8" GridPane.rowIndex="2" GridPane.columnIndex="2" GridPane.columnSpan="2"><Button fx:id="btnProductoGuardar" text="Registrar producto" onAction="#guardarProducto"/><Button text="Nuevo" onAction="#nuevoProducto"/><Button fx:id="btnProductoEstado" text="Dar de baja" onAction="#cambiarEstadoProducto"/></HBox>
+       <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="2" GridPane.columnIndex="2" GridPane.columnSpan="2"><Button fx:id="btnProductoGuardar" text="Registrar producto" styleClass="action-button" onAction="#guardarProducto"/><Button text="Nuevo" onAction="#nuevoProducto"/><Button fx:id="btnProductoEstado" text="Dar de baja" onAction="#cambiarEstadoProducto"/></HBox>
       </GridPane>
-      <TableView fx:id="tvProductos" VBox.vgrow="ALWAYS"><columns>
+      <TableView fx:id="tvProductos" VBox.vgrow="ALWAYS"><columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy><columns>
        <TableColumn fx:id="colProdNombre" text="Producto"/><TableColumn fx:id="colProdDescripcion" text="Descripción"/><TableColumn fx:id="colProdStock" text="Stock"/><TableColumn fx:id="colProdMinimo" text="Mínimo"/><TableColumn fx:id="colProdEstado" text="Estado"/><TableColumn fx:id="colProdAlerta" text="Alerta"/>
       </columns></TableView>
-    </VBox></content></Tab>
+    </VBox>
 
-    <Tab text="Consumo / baja" closable="false"><content><VBox spacing="12"><padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
-      <Label text="Registrar consumo de producto"><font><Font name="System Bold" size="18"/></font></Label>
-      <Label text="El consumo descuenta la cantidad utilizada del stock y registra el usuario que realizó la operación." wrapText="true"/>
-      <GridPane hgap="10" vgap="10"><Label text="Producto:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><ComboBox fx:id="cbConsumoProducto" prefWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-       <Label text="Cantidad utilizada:" GridPane.columnIndex="0" GridPane.rowIndex="1"/><TextField fx:id="txtConsumoCantidad" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-       <Label fx:id="lblStockConsumo" text="Stock actual: -" GridPane.columnIndex="1" GridPane.rowIndex="2"/><Button text="Registrar consumo / baja" onAction="#registrarConsumo" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <VBox fx:id="vistaConsumo" spacing="12"><padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+      <Label text="Registrar consumo de producto" styleClass="label-subsection"/>
+      <Label text="El consumo descuenta la cantidad utilizada del stock y registra el usuario que realizó la operación." styleClass="erp-subtitle" wrapText="true"/>
+      <GridPane hgap="12" vgap="10">
+       <columnConstraints><ColumnConstraints minWidth="140" prefWidth="150"/><ColumnConstraints minWidth="300" prefWidth="300"/></columnConstraints>
+       <Label text="Producto:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><ComboBox fx:id="cbConsumoProducto" prefWidth="300" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+       <Label text="Cantidad utilizada:" GridPane.columnIndex="0" GridPane.rowIndex="1"/><TextField fx:id="txtConsumoCantidad" prefWidth="300" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+       <Label fx:id="lblStockConsumo" text="Stock actual: -" styleClass="label-note" GridPane.columnIndex="1" GridPane.rowIndex="2"/><Button text="Registrar consumo / baja" styleClass="action-button" onAction="#registrarConsumo" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
       </GridPane>
-    </VBox></content></Tab>
+    </VBox>
 
-    <Tab text="Proveedores" closable="false"><content><VBox spacing="8"><padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
-      <GridPane hgap="8" vgap="8"><Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><TextField fx:id="txtProveedorNombre" GridPane.columnIndex="1" GridPane.rowIndex="0"/><Label text="Teléfono:" GridPane.columnIndex="2" GridPane.rowIndex="0"/><TextField fx:id="txtProveedorTelefono" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+    <VBox fx:id="vistaProveedores" spacing="14"><padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+      <GridPane hgap="12" vgap="10">
+       <columnConstraints>
+        <ColumnConstraints minWidth="100" prefWidth="110"/><ColumnConstraints hgrow="ALWAYS" minWidth="120"/><ColumnConstraints minWidth="100" prefWidth="110"/><ColumnConstraints hgrow="ALWAYS" minWidth="120"/>
+       </columnConstraints>
+       <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><TextField fx:id="txtProveedorNombre" GridPane.columnIndex="1" GridPane.rowIndex="0"/><Label text="Teléfono:" GridPane.columnIndex="2" GridPane.rowIndex="0"/><TextField fx:id="txtProveedorTelefono" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="1"/><TextField fx:id="txtProveedorEmail" GridPane.columnIndex="1" GridPane.rowIndex="1"/><Label text="Dirección:" GridPane.columnIndex="2" GridPane.rowIndex="1"/><TextField fx:id="txtProveedorDireccion" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-       <HBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="2"><Button fx:id="btnProveedorGuardar" text="Registrar proveedor" onAction="#guardarProveedor"/><Button text="Nuevo" onAction="#nuevoProveedor"/></HBox>
+       <HBox spacing="10" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"><Button fx:id="btnProveedorGuardar" text="Registrar proveedor" styleClass="action-button" onAction="#guardarProveedor"/><Button text="Nuevo" onAction="#nuevoProveedor"/></HBox>
       </GridPane>
-      <TableView fx:id="tvProveedores" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colProvNombre" text="Proveedor"/><TableColumn fx:id="colProvTelefono" text="Teléfono"/><TableColumn fx:id="colProvEmail" text="Email"/><TableColumn fx:id="colProvDireccion" text="Dirección"/></columns></TableView>
-    </VBox></content></Tab>
+      <TableView fx:id="tvProveedores" VBox.vgrow="ALWAYS"><columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy><columns><TableColumn fx:id="colProvNombre" text="Proveedor"/><TableColumn fx:id="colProvTelefono" text="Teléfono"/><TableColumn fx:id="colProvEmail" text="Email"/><TableColumn fx:id="colProvDireccion" text="Dirección"/></columns></TableView>
+    </VBox>
 
-    <Tab text="Compras" closable="false"><content><VBox spacing="8"><padding><Insets top="8" right="8" bottom="8" left="8"/></padding>
-      <GridPane hgap="8" vgap="8"><Label text="Proveedor:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><ComboBox fx:id="cbCompraProveedor" prefWidth="220" GridPane.columnIndex="1" GridPane.rowIndex="0"/><Label text="Producto:" GridPane.columnIndex="2" GridPane.rowIndex="0"/><ComboBox fx:id="cbCompraProducto" prefWidth="220" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+    <VBox fx:id="vistaCompras" spacing="14"><padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+      <GridPane hgap="12" vgap="10">
+       <columnConstraints>
+        <ColumnConstraints minWidth="100" prefWidth="110"/><ColumnConstraints hgrow="ALWAYS" minWidth="150"/><ColumnConstraints minWidth="100" prefWidth="110"/><ColumnConstraints hgrow="ALWAYS" minWidth="150"/>
+       </columnConstraints>
+       <Label text="Proveedor:" GridPane.columnIndex="0" GridPane.rowIndex="0"/><ComboBox fx:id="cbCompraProveedor" prefWidth="220" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="0"/><Label text="Producto:" GridPane.columnIndex="2" GridPane.rowIndex="0"/><ComboBox fx:id="cbCompraProducto" prefWidth="220" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
        <Label text="Cantidad:" GridPane.columnIndex="0" GridPane.rowIndex="1"/><TextField fx:id="txtCompraCantidad" GridPane.columnIndex="1" GridPane.rowIndex="1"/><Label text="Precio unitario:" GridPane.columnIndex="2" GridPane.rowIndex="1"/><TextField fx:id="txtCompraPrecio" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-       <Button text="Registrar compra" onAction="#registrarCompra" GridPane.columnIndex="1" GridPane.rowIndex="2"/><Button text="Actualizar listado" onAction="#refrescar" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+       <Button text="Registrar compra" styleClass="action-button" onAction="#registrarCompra" GridPane.columnIndex="1" GridPane.rowIndex="2"/><Button text="Actualizar listado" onAction="#refrescar" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
       </GridPane>
-      <TableView fx:id="tvCompras" VBox.vgrow="ALWAYS"><columns><TableColumn fx:id="colCompraId" text="#"/><TableColumn fx:id="colCompraProveedor" text="Proveedor"/><TableColumn fx:id="colCompraProducto" text="Producto"/><TableColumn fx:id="colCompraCantidad" text="Cantidad"/><TableColumn fx:id="colCompraPrecio" text="Precio unit."/><TableColumn fx:id="colCompraTotal" text="Total"/><TableColumn fx:id="colCompraFecha" text="Fecha"/><TableColumn fx:id="colCompraUsuario" text="Usuario"/></columns></TableView>
-    </VBox></content></Tab>
-   </tabs>
-  </TabPane>
+      <TableView fx:id="tvCompras" VBox.vgrow="ALWAYS"><columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy><columns><TableColumn fx:id="colCompraId" text="#"/><TableColumn fx:id="colCompraProveedor" text="Proveedor"/><TableColumn fx:id="colCompraProducto" text="Producto"/><TableColumn fx:id="colCompraCantidad" text="Cantidad"/><TableColumn fx:id="colCompraPrecio" text="Precio unit."/><TableColumn fx:id="colCompraTotal" text="Total"/><TableColumn fx:id="colCompraFecha" text="Fecha"/><TableColumn fx:id="colCompraUsuario" text="Usuario"/></columns></TableView>
+    </VBox>
+   </children>
+  </StackPane>
  </VBox></children>
 </AnchorPane>

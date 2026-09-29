@@ -13,34 +13,30 @@
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.ComisionesProfesionalController"
-            prefWidth="1050.0"
+            styleClass="erp-root"
+            stylesheets="@/resource/styles.css"
+            prefWidth="1000.0"
             prefHeight="650.0"
-            minWidth="950.0"
-            minHeight="600.0">
+            minWidth="800.0"
+            minHeight="520.0">
 
     <top>
 
-        <VBox spacing="8">
-
-            <padding>
-                <Insets top="20"
-                        right="20"
-                        bottom="15"
-                        left="20"/>
-            </padding>
-
+        <VBox styleClass="erp-page">
             <Label text="COMISIONES DEL PROFESIONAL"
-                   styleClass="titulo"/>
-            <Label fx:id="lblProfesional"
-                   text="-"
-                   styleClass="subtitulo"/>
-            <Label text="PORCENTAJE"
-                   styleClass="titulo"/>
-            <Label fx:id="lblPorcentaje"
-                   text="0 %"
-                   styleClass="subtitulo"/>
-
-
+                   styleClass="titulo erp-title"/>
+            <HBox spacing="48" alignment="CENTER_LEFT" styleClass="erp-card">
+                <Label fx:id="lblProfesional"
+                       text="-"
+                       styleClass="subtitulo label-subsection"/>
+                <VBox spacing="2">
+                    <Label text="PORCENTAJE"
+                           styleClass="titulo erp-caption"/>
+                    <Label fx:id="lblPorcentaje"
+                           text="0 %"
+                           styleClass="subtitulo label-subsection"/>
+                </VBox>
+            </HBox>
         </VBox>
 
     </top>
@@ -48,16 +44,13 @@
 
     <center>
 
-        <VBox spacing="15">
-
+        <VBox spacing="14">
             <padding>
-                <Insets top="10"
-                        right="20"
-                        bottom="10"
-                        left="20"/>
+                <Insets top="0" right="24" bottom="10" left="24"/>
             </padding>
-
-            <HBox spacing="10"
+            <VBox styleClass="erp-card">
+                <Label text="PERÍODO" styleClass="erp-card-title"/>
+                <HBox spacing="10"
                   alignment="CENTER_LEFT">
 
                 <Label text="Desde:"/>
@@ -70,7 +63,7 @@
 
                 <Button text="CONSULTAR"
                         onAction="#consultarComisiones"
-                        styleClass="boton-accion"/>
+                        styleClass="boton-accion action-button"/>
 
                 <Button text="HOY"
                         onAction="#consultarHoy"/>
@@ -79,10 +72,12 @@
                         onAction="#consultarMes"/>
 
             </HBox>
+            </VBox>
 
 
             <TableView fx:id="tablaComisiones"
                        VBox.vgrow="ALWAYS">
+<columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
 
                 <columns>
 
@@ -113,22 +108,22 @@
 
     <bottom>
 
-        <HBox spacing="15"
-              alignment="CENTER_RIGHT">
-
+        <HBox spacing="12"
+              alignment="CENTER_RIGHT"
+              styleClass="erp-action-bar">
             <padding>
                 <Insets top="10"
-                        right="20"
-                        bottom="15"
-                        left="20"/>
+                        right="24"
+                        bottom="20"
+                        left="24"/>
             </padding>
 
             <Label text="TOTAL COMISIONES:"
-                   styleClass="subtitulo"/>
+                   styleClass="subtitulo label-subsection"/>
 
             <Label fx:id="lblTotal"
                    text="0,00"
-                   styleClass="subtitulo"/>
+                   styleClass="subtitulo label-subsection"/>
 
             <Button text="CERRAR"
                     onAction="#cerrar"/>

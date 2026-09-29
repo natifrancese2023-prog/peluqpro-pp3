@@ -6,35 +6,40 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.FacturaController">
+            fx:controller="controllers.FacturaController"
+            styleClass="erp-root"
+            stylesheets="@/resource/styles.css">
 
     <center>
-        <VBox spacing="10" >
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            <!-- Datos del cliente -->
-            <Label text="Cliente:" style="-fx-font-weight: bold;" />
-            <Label fx:id="lblCliente" />
+        <VBox styleClass="erp-page">
+            <Label text="FACTURA" styleClass="erp-title" />
 
-            <!-- Servicios realizados -->
-            <Label text="Servicios realizados:" style="-fx-font-weight: bold;" />
-            <ListView fx:id="lvServicios" prefHeight="150" />
+            <VBox styleClass="erp-card">
+                <!-- Datos del cliente -->
+                <Label text="Cliente:" styleClass="erp-caption" />
+                <Label fx:id="lblCliente" styleClass="label-subsection" />
 
-            <!-- Forma de pago -->
-            <Label text="Forma de pago:" style="-fx-font-weight: bold;" />
-            <ComboBox fx:id="cbFormaPago" prefWidth="200" />
+                <!-- Servicios realizados -->
+                <Label text="Servicios realizados:" styleClass="erp-caption" />
+                <ListView fx:id="lvServicios" prefHeight="150" />
 
-            <!-- Total -->
-            <Label text="Total a pagar:" style="-fx-font-weight: bold;" />
-            <Label fx:id="lblTotal" style="-fx-font-size: 16px;" />
+                <!-- Forma de pago -->
+                <Label text="Forma de pago:" styleClass="erp-caption" />
+                <ComboBox fx:id="cbFormaPago" prefWidth="240" />
+
+                <!-- Total -->
+                <Label text="Total a pagar:" styleClass="erp-caption" />
+                <Label fx:id="lblTotal" styleClass="erp-title" />
+            </VBox>
 
             <!-- Botón de confirmación -->
-            <Button fx:id="btnConfirmar"
-                    text="Confirmar factura"
-                    onAction="#handleConfirmarFactura"
-                    prefWidth="200"
-                    style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+            <HBox alignment="CENTER_RIGHT" styleClass="erp-action-bar">
+                <Button fx:id="btnConfirmar"
+                        text="Confirmar factura"
+                        onAction="#handleConfirmarFactura"
+                        prefWidth="200"
+                        styleClass="action-button" />
+            </HBox>
         </VBox>
     </center>
 </BorderPane>

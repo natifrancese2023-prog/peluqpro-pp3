@@ -27,9 +27,6 @@ public class PanelPrincipalController {
     @FXML private Button btnGestionClientes;
     @FXML private Button btnGestionTurnos;
     @FXML private Button btnReporteCliente;
-    @FXML private Button btnListadoFacturas;
-    @FXML private Button btnReporteFacturacion;
-    @FXML private Button btnExportarTodoPower;
     @FXML private Button btnGestionProfesionales;
     @FXML private Button btnGestionStock;
 
@@ -48,9 +45,6 @@ public class PanelPrincipalController {
         btnGestionClientes.setDisable(false);
         btnGestionTurnos.setDisable(esEstilista);
         btnReporteCliente.setDisable(!esGerente);
-        btnReporteFacturacion.setDisable(!esGerente);
-        btnExportarTodoPower.setDisable(!esGerente);
-        btnListadoFacturas.setDisable(esEstilista);
         btnGestionProfesionales.setDisable(!esGerente);
     }
 
@@ -88,7 +82,7 @@ public class PanelPrincipalController {
 
     @FXML
     private void abrirReporteClientes(ActionEvent event) {
-        cargarVista("/interface/Reporte_Cliente.fxml");
+        cargarVista("/interface/moduloPrincipalReportes.fxml");
     }
 
     @FXML

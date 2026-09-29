@@ -3,7 +3,12 @@ package controllers;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import utilidades.AlertaUtil;
 
 import java.io.IOException;
 
@@ -40,4 +45,38 @@ public class ModuloPrincipalProfesionalController {
             e.printStackTrace();
         }
     }
+
+    // ============================================================
+    // PRODUCTIVIDAD
+    // ============================================================
+    @FXML
+    private void verProductividad() {
+
+        try {
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/interface/ProductividadProfesional.fxml"
+                            )
+                    );
+
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Productividad por profesional");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            AlertaUtil.mostrarAlerta(
+                    Alert.AlertType.ERROR,
+                    "Error",
+                    null,
+                    "No se pudo abrir la consulta de productividad."
+            );
+        }
+    }
+
 }

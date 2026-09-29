@@ -82,3 +82,404 @@
 .button-bar {
     -fx-padding: 10px;
 }
+
+
+/* ==========================================================================
+   CAPA VISUAL ERP  -  PANTALLAS INTERNAS
+   --------------------------------------------------------------------------
+   Todo lo que sigue esta ACOTADO al selector .erp-root, que solo llevan los
+   FXML internos (nunca panelPrincipal ni login). Por eso el Panel Principal
+   (botones rojos laterales) NO cambia. Las reglas de arriba no se modificaron.
+
+   NUEVAS styleClass (solo visuales, sin logica):
+     erp-root        raiz de cada pantalla interna (fondo, paleta, tipografia)
+     erp-page        contenedor de pagina (padding y separacion estandar)
+     erp-card        panel blanco con borde (filtros, formularios, resultados)
+     erp-card-title  rotulo pequeno de un grupo (PERIODO, RESULTADOS, ...)
+     erp-title       titulo de pantalla
+     erp-subtitle    descripcion bajo el titulo
+     erp-section     subtitulo de seccion con marca roja lateral
+     erp-caption     rotulo pequeno en gris (etiqueta de dato)
+     erp-field-label etiqueta de dato en negrita
+     erp-value       TextField solo-lectura con aspecto de texto plano
+     erp-kpi         indicador resumen (caja blanca)
+     erp-ok / erp-warn / erp-danger   estados (verde / naranja / rojo)
+     erp-sidebar     menu lateral de un modulo
+     erp-action-bar  barra de botones al pie
+     erp-primary     boton principal (rojo)   |  erp-outline  boton exportar (borde rojo)
+     erp-neutral     boton neutro/secundario que conserva action-button (ej. LIMPIAR)
+     erp-list-plain  ListView sin marco (solo lectura)
+   Clases que ya existian en los FXML pero no tenian definicion (ahora la tienen,
+   solo dentro de .erp-root): titulo-principal, boton-accion, boton-buscar,
+   menu-button-secondary, label-note, label-hint, label-subsection, toolbar.
+   ========================================================================== */
+
+/* ---------- Base y paleta ---------- */
+.erp-root {
+    -erp-red: #E53935;
+    -erp-red-hover: #D32F2F;
+    -erp-red-dark: #B71C1C;
+    -erp-red-soft: #FDECEA;
+    -erp-bg: #F4F5F7;
+    -erp-border: #D9DDE3;
+    -erp-border-soft: #E9ECF0;
+    -erp-header-bg: #F1F3F5;
+    -erp-text: #1F2933;
+    -erp-text-muted: #6B7280;
+    -erp-ok: #2E7D32;
+    -erp-warn: #EF6C00;
+
+    CHART_COLOR_1: #E53935;
+    CHART_COLOR_2: #37474F;
+    CHART_COLOR_3: #90A4AE;
+    CHART_COLOR_4: #EF9A9A;
+    CHART_COLOR_5: #607D8B;
+    CHART_COLOR_6: #B71C1C;
+    CHART_COLOR_7: #B0BEC5;
+    CHART_COLOR_8: #FF8A80;
+
+    -fx-background-color: -erp-bg;
+    -fx-font-size: 13px;
+}
+
+/* ---------- Estructura ---------- */
+.erp-root .erp-page { -fx-padding: 20 24 20 24; -fx-spacing: 14; }
+.erp-page.erp-root { -fx-padding: 20 24 20 24; -fx-spacing: 14; }  /* cuando la raiz de la pantalla es un VBox */
+.erp-root .erp-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 8;
+    -fx-padding: 14 16 14 16;
+    -fx-spacing: 10;
+}
+.erp-root .erp-sidebar {
+    -fx-background-color: white;
+    -fx-border-color: transparent -erp-border transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 16 14 16 14;
+    -fx-spacing: 10;
+}
+.erp-root .toolbar {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent -erp-border transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 24 8 24;
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+.erp-root .erp-action-bar { -fx-spacing: 10; -fx-alignment: center-right; }
+.erp-root .content-panel { -fx-background-color: transparent; }
+.erp-root .button-bar { -fx-padding: 4 0 0 0; -fx-spacing: 10; }
+.erp-root .separator { -fx-background-color: transparent; }
+.erp-root .separator .line { -fx-border-color: -erp-border transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-background-color: transparent; }
+
+/* ---------- Tipografia ---------- */
+.erp-root .label { -fx-text-fill: -erp-text; }
+.erp-root .label-header,
+.erp-root .titulo-principal,
+.erp-root .erp-title { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -erp-text; }
+.erp-root .erp-subtitle,
+.erp-root .label-hint { -fx-font-size: 13px; -fx-text-fill: -erp-text-muted; }
+.erp-root .label-subsection { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -erp-text; }
+.erp-root .label-note { -fx-font-weight: bold; -fx-text-fill: -erp-text; }
+.erp-root .label-section,
+.erp-root .erp-section {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -erp-text;
+    -fx-border-color: transparent transparent transparent -erp-red;
+    -fx-border-width: 0 0 0 3;
+    -fx-padding: 0 0 0 8;
+}
+.erp-root .erp-card-title { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -erp-text-muted; }
+.erp-root .erp-caption { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -erp-text-muted; }
+.erp-root .erp-field-label { -fx-font-weight: bold; -fx-text-fill: -erp-text; }
+.erp-root .erp-kpi {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 6;
+    -fx-padding: 8 14 8 14;
+    -fx-font-weight: bold;
+}
+.erp-root .erp-ok { -fx-text-fill: -erp-ok; -fx-font-weight: bold; }
+.erp-root .erp-warn { -fx-text-fill: -erp-warn; -fx-font-weight: bold; }
+.erp-root .erp-danger { -fx-text-fill: -erp-red-dark; -fx-font-weight: bold; }
+
+.erp-root .label.erp-title { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -erp-text; }
+
+/* ---------- Campos de formulario ---------- */
+.erp-root .text-field,
+.erp-root .combo-box-base {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 5;
+    -fx-min-height: 34px;
+    -fx-pref-height: 34px;
+}
+.erp-root .text-field { -fx-padding: 0 10 0 10; }
+.erp-root .combo-box-base { -fx-padding: 0; }
+.erp-root .combo-box-base > .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 0 10;
+    -fx-text-fill: -erp-text;
+}
+.erp-root .combo-box-base > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 5 5 0;
+    -fx-padding: 0 10 0 6;
+}
+.erp-root .combo-box-base > .text-field,
+.erp-root .date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-min-height: 0;
+    -fx-pref-height: -1;
+    -fx-padding: 0 0 0 10;
+}
+.erp-root .text-area {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 5;
+    -fx-padding: 0;
+}
+.erp-root .text-area .content { -fx-background-color: white; -fx-background-radius: 5; }
+.erp-root .text-field:focused,
+.erp-root .combo-box-base:focused,
+.erp-root .text-area:focused { -fx-border-color: -erp-red; }
+.erp-root .text-field.erp-value {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-min-height: 24px;
+    -fx-pref-height: 24px;
+    -fx-font-weight: bold;
+}
+.erp-root .check-box { -fx-text-fill: -erp-text; }
+.erp-root .check-box .box {
+    -fx-background-color: white;
+    -fx-background-radius: 3;
+    -fx-background-insets: 0;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 3;
+}
+.erp-root .check-box:selected .box { -fx-background-color: -erp-red; -fx-border-color: -erp-red; }
+.erp-root .check-box:selected .mark { -fx-background-color: white; }
+
+/* ---------- Botones ----------
+   Por defecto (sin clase / secundarios): blanco con borde gris.
+   Principales: rojo.  Destructivos: rojo oscuro.  Exportar: borde rojo. */
+.erp-root .button {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 5;
+    -fx-text-fill: -erp-text;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 16 0 16;
+    -fx-min-height: 36px;
+    -fx-pref-height: 36px;
+    -fx-cursor: hand;
+}
+.erp-root .button:hover { -fx-background-color: #EEF0F3; }
+.erp-root .button:pressed { -fx-background-color: #E2E5EA; }
+.erp-root .button:focused { -fx-border-color: -erp-red; }
+
+.erp-root .action-button,
+.erp-root .menu-button,
+.erp-root .boton-buscar,
+.erp-root .erp-primary {
+    -fx-background-color: -erp-red;
+    -fx-border-color: -erp-red;
+    -fx-text-fill: white;
+}
+.erp-root .action-button:hover,
+.erp-root .menu-button:hover,
+.erp-root .boton-buscar:hover,
+.erp-root .erp-primary:hover { -fx-background-color: -erp-red-hover; -fx-border-color: -erp-red-hover; }
+.erp-root .action-button:pressed,
+.erp-root .menu-button:pressed,
+.erp-root .boton-buscar:pressed,
+.erp-root .erp-primary:pressed { -fx-background-color: -erp-red-dark; -fx-border-color: -erp-red-dark; }
+
+.erp-root .danger-button {
+    -fx-background-color: -erp-red-dark;
+    -fx-border-color: -erp-red-dark;
+    -fx-text-fill: white;
+}
+.erp-root .danger-button:hover { -fx-background-color: #9F1717; -fx-border-color: #9F1717; }
+.erp-root .danger-button:pressed { -fx-background-color: #7F1212; -fx-border-color: #7F1212; }
+
+.erp-root .erp-outline {
+    -fx-background-color: white;
+    -fx-border-color: -erp-red;
+    -fx-text-fill: -erp-red;
+}
+.erp-root .erp-outline:hover { -fx-background-color: -erp-red-soft; }
+.erp-root .erp-outline:pressed { -fx-background-color: #F9D6D3; }
+
+/* secundarios explicitos: vuelven al aspecto neutro aunque el CSS global los pinte de rojo */
+.erp-root .secondary-button,
+.erp-root .boton-accion,
+.erp-root .menu-button-secondary {
+    -fx-background-color: white;
+    -fx-border-color: -erp-border;
+    -fx-text-fill: -erp-text;
+}
+.erp-root .secondary-button:hover,
+.erp-root .boton-accion:hover,
+.erp-root .menu-button-secondary:hover { -fx-background-color: #EEF0F3; }
+/* si un boton combina secundario + principal/destructivo, gana el principal/destructivo */
+.erp-root .boton-accion.action-button,
+.erp-root .boton-accion.erp-primary {
+    -fx-background-color: -erp-red; -fx-border-color: -erp-red; -fx-text-fill: white;
+}
+.erp-root .boton-accion.action-button:hover,
+.erp-root .boton-accion.erp-primary:hover { -fx-background-color: -erp-red-hover; -fx-border-color: -erp-red-hover; }
+.erp-root .boton-accion.danger-button {
+    -fx-background-color: -erp-red-dark; -fx-border-color: -erp-red-dark; -fx-text-fill: white;
+}
+.erp-root .boton-accion.danger-button:hover { -fx-background-color: #9F1717; -fx-border-color: #9F1717; }
+.erp-root .boton-accion.erp-outline {
+    -fx-background-color: white; -fx-border-color: -erp-red; -fx-text-fill: -erp-red;
+}
+.erp-root .boton-accion.erp-outline:hover { -fx-background-color: -erp-red-soft; }
+
+.erp-root .button:disabled {
+    -fx-background-color: #ECEEF1;
+    -fx-border-color: #DDE0E5;
+    -fx-text-fill: #9AA1AB;
+}
+
+/* neutro explicito: para botones que conservan action-button pero son secundarios (ej. LIMPIAR) */
+.erp-root .erp-neutral,
+.erp-root .action-button.erp-neutral {
+    -fx-background-color: white;
+    -fx-border-color: -erp-border;
+    -fx-text-fill: -erp-text;
+}
+.erp-root .erp-neutral:hover,
+.erp-root .action-button.erp-neutral:hover { -fx-background-color: #EEF0F3; -fx-border-color: -erp-border; }
+.erp-root .erp-neutral:pressed,
+.erp-root .action-button.erp-neutral:pressed { -fx-background-color: #E2E5EA; -fx-border-color: -erp-border; }
+.erp-root .button.erp-neutral:disabled { -fx-background-color: #ECEEF1; -fx-border-color: #DDE0E5; -fx-text-fill: #9AA1AB; }
+
+/* ---------- Pestanas (referencia: Productos, Stock y Proveedores) ---------- */
+.erp-root .tab-pane { -fx-tab-min-width: 170px; -fx-tab-min-height: 36px; }
+.erp-root .tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-effect: null;
+}
+.erp-root .tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: #E9ECF0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6 6 0 0;
+    -fx-border-color: transparent -erp-border transparent -erp-border;
+    -fx-border-width: 3 1 0 1;
+    -fx-border-radius: 6 6 0 0;
+    -fx-padding: 0 12 0 12;
+}
+.erp-root .tab-pane > .tab-header-area > .headers-region > .tab:hover { -fx-background-color: #F3F4F6; }
+.erp-root .tab-pane > .tab-header-area > .headers-region > .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: -erp-red -erp-border transparent -erp-border;
+}
+.erp-root .tab .tab-label { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -erp-text-muted; }
+.erp-root .tab:selected .tab-label { -fx-text-fill: -erp-red; }
+.erp-root .tab-pane > .tab-content-area {
+    -fx-background-color: white;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 0 6 6 6;
+    -fx-background-radius: 0 6 6 6;
+}
+
+/* ---------- Tablas ---------- */
+.erp-root .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-background-insets: 0;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0;
+}
+.erp-root .table-view .column-header-background { -fx-background-color: -erp-header-bg; -fx-background-radius: 6 6 0 0; }
+.erp-root .table-view .column-header,
+.erp-root .table-view .filler {
+    -fx-background-color: -erp-header-bg;
+    -fx-size: 38px;
+    -fx-border-color: transparent transparent -erp-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.erp-root .table-view .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -erp-text;
+    -fx-alignment: center-left;
+}
+.erp-root .table-view .table-row-cell {
+    -fx-cell-size: 36px;
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent -erp-border-soft transparent;
+    -fx-table-cell-border-color: transparent;
+}
+.erp-root .table-view .table-row-cell:odd { -fx-background-color: #FAFBFC; }
+.erp-root .table-view .table-row-cell:hover { -fx-background-color: #F3F4F6; }
+.erp-root .table-view .table-row-cell:selected { -fx-background-color: -erp-red-soft; }
+.erp-root .table-view .table-row-cell:empty { -fx-background-color: white; -fx-border-color: transparent; }
+.erp-root .table-view .table-cell {
+    -fx-alignment: center-left;
+    -fx-padding: 0 10 0 10;
+    -fx-text-fill: -erp-text;
+    -fx-border-color: transparent;
+}
+.erp-root .table-view .table-row-cell:selected .table-cell { -fx-text-fill: -erp-text; }
+.erp-root .table-view .placeholder .label { -fx-text-fill: -erp-text-muted; }
+
+/* ---------- Listas ---------- */
+.erp-root .list-view {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-background-insets: 0;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0;
+}
+.erp-root .list-view .list-cell {
+    -fx-cell-size: 32px;
+    -fx-padding: 0 10 0 10;
+    -fx-background-color: white;
+    -fx-text-fill: -erp-text;
+}
+.erp-root .list-view .list-cell:odd { -fx-background-color: #FAFBFC; }
+.erp-root .list-view .list-cell:selected { -fx-background-color: -erp-red-soft; }
+.erp-root .list-view .list-cell:empty { -fx-background-color: white; }
+.erp-root .list-view.erp-list-plain { -fx-background-color: transparent; -fx-border-color: transparent; }
+.erp-root .list-view.erp-list-plain .list-cell,
+.erp-root .list-view.erp-list-plain .list-cell:odd,
+.erp-root .list-view.erp-list-plain .list-cell:empty { -fx-background-color: transparent; -fx-padding: 0 0 0 2; }
+
+/* ---------- ScrollPane ---------- */
+.erp-root .scroll-pane { -fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0; }
+.erp-root .scroll-pane > .viewport { -fx-background-color: transparent; }
+
+/* ---------- Graficos ---------- */
+.erp-root .chart {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: -erp-border;
+    -fx-border-radius: 8;
+    -fx-padding: 10;
+}
+.erp-root .chart-title { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -erp-text; }
+.erp-root .chart-plot-background { -fx-background-color: transparent; }
+.erp-root .chart-vertical-grid-lines,
+.erp-root .chart-horizontal-grid-lines { -fx-stroke: #EEF0F3; }
+.erp-root .chart-series-line { -fx-stroke-width: 2px; }

@@ -59,7 +59,7 @@ public class Turno {
         return switch (actual) {
             case PENDIENTE -> (nuevoEstado == EstadoTurno.CONFIRMADO || nuevoEstado == EstadoTurno.CANCELADO);
             case CONFIRMADO -> (nuevoEstado == EstadoTurno.FINALIZADO || nuevoEstado == EstadoTurno.CANCELADO);
-            case FINALIZADO -> (nuevoEstado == EstadoTurno.FACTURADO);
+            case FINALIZADO -> false;
             default -> false;
         };
     }

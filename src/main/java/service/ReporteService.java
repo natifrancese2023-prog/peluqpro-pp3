@@ -1,6 +1,7 @@
 package service;
 
 import claseslogicas.ClienteReporteExtendido;
+import claseslogicas.ClienteRiesgo;
 import dao.ReporteDAO;
 
 import java.math.BigDecimal;
@@ -20,4 +21,12 @@ public class ReporteService {
             throws SQLException {
         return reporteDAO.obtenerTicketPromedioCliente(idCliente, desde, hasta);
     }
+    public List<ClienteRiesgo> obtenerClientesEnRiesgo() throws SQLException {
+        return reporteDAO.obtenerClientesEnRiesgo();
+    }
+
+    public BigDecimal obtenerTicketPromedio(LocalDate desde, LocalDate hasta) throws SQLException {
+        return reporteDAO.obtenerTicketPromedio(desde, hasta);
+    }
+
 }

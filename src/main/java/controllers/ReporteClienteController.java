@@ -2,6 +2,7 @@ package controllers;
 
 import claseslogicas.Cliente;
 import claseslogicas.ClienteReporteExtendido;
+import claseslogicas.ClienteRiesgo;
 import claseslogicas.HistorialView;
 import claseslogicas.ExportadorExcel;
 import claseslogicas.ExportadorPDF;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
@@ -66,6 +68,16 @@ public class ReporteClienteController {
     @FXML private PieChart graficoTorta;
     @FXML private BarChart<String, Number> graficoHistograma;
 
+    @FXML private TableView<ClienteRiesgo> tablaClientesRiesgo;
+    @FXML private TableColumn<ClienteRiesgo, String> colRiesgoNombre;
+    @FXML private TableColumn<ClienteRiesgo, String> colRiesgoTelefono;
+    @FXML private TableColumn<ClienteRiesgo, String> colRiesgoEmail;
+    @FXML private TableColumn<ClienteRiesgo, String> colRiesgoUltimaVisita;
+    @FXML private TableColumn<ClienteRiesgo, Integer> colRiesgoDias;
+    @FXML private DatePicker fechaDesdeTicket;
+    @FXML private DatePicker fechaHastaTicket;
+    @FXML private Label lblTicketPromedioGeneral;
+
     private final ReporteDAO reporteDAO = new ReporteDAO();
     private final ReporteService reporteService = new ReporteService();
     private final ClienteService clienteService = new ClienteService();
@@ -80,8 +92,10 @@ public class ReporteClienteController {
         configurarTabla();
         configurarFiltro();
         configurarConsultaPorCliente();
+        configurarTablaRiesgo();
         cargarClientesParaConsulta();
         cargarDatosClientes();
+        cargarClientesEnRiesgo();
     }
 
     private void configurarConsultaPorCliente() {
@@ -209,6 +223,83 @@ public class ReporteClienteController {
         cbFiltro.setOnAction(e -> actualizarVisualizacion());
     }
 
+    private void configurarTablaRiesgo() {
+        colRiesgoNombre.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getNombreCompleto()));
+        colRiesgoTelefono.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getTelefono() != null ? data.getValue().getTelefono() : "-"));
+        colRiesgoEmail.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getEmail() != null ? data.getValue().getEmail() : "-"));
+        colRiesgoUltimaVisita.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getUltimaVisita() == null
+                        ? "-"
+                        : data.getValue().getUltimaVisita().format(FORMATO_FECHA_HORA)));
+        colRiesgoDias.setCellValueFactory(data -> {
+            LocalDateTime ultima = data.getValue().getUltimaVisita();
+
+            int dias = ultima == null
+                    ? 0
+                    : (int) java.time.temporal.ChronoUnit.DAYS.between(
+                    ultima.toLocalDate(),
+                    LocalDate.now());
+
+            return new javafx.beans.property.SimpleObjectProperty<Integer>(dias);
+        });
+    }
+
+    private void cargarClientesEnRiesgo() {
+        try {
+            List<ClienteRiesgo> clientesRiesgo = reporteService.obtenerClientesEnRiesgo();
+            tablaClientesRiesgo.setItems(FXCollections.observableArrayList(clientesRiesgo));
+        } catch (Exception e) {
+            tablaClientesRiesgo.setItems(FXCollections.observableArrayList());
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error al consultar", null,
+                    "No se pudieron obtener los clientes en riesgo.");
+        }
+    }
+
+    @FXML
+    private void actualizarClientesEnRiesgo() {
+        cargarClientesEnRiesgo();
+        if (tablaClientesRiesgo.getItems().isEmpty()) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sin resultados", null,
+                    "No se encontraron clientes cuya última visita supere los tres meses.");
+        }
+    }
+
+    @FXML
+    private void consultarTicketPromedio() {
+        LocalDate desde = fechaDesdeTicket.getValue();
+        LocalDate hasta = fechaHastaTicket.getValue();
+
+        if (desde == null || hasta == null) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.WARNING, "Datos incompletos", null,
+                    "Seleccioná las fechas Desde y Hasta.");
+            return;
+        }
+        if (hasta.isBefore(desde)) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Período inválido", null,
+                    "La fecha Hasta no puede ser anterior a la fecha Desde.");
+            return;
+        }
+
+        try {
+            BigDecimal ticket = reporteService.obtenerTicketPromedio(desde, hasta);
+            if (ticket == null) {
+                lblTicketPromedioGeneral.setText("Ticket promedio: Sin datos");
+                AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sin resultados", null,
+                        "No se encontraron facturas para el período seleccionado.");
+                return;
+            }
+
+            lblTicketPromedioGeneral.setText(
+                    "Ticket promedio: " + String.format("$%.2f", ticket));
+        } catch (Exception e) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error al consultar", null,
+                    "No se pudo calcular el ticket promedio del período seleccionado.");
+        }
+    }
+
     private void cargarDatosClientes() {
         try {
             datosClientes = reporteDAO.obtenerDatosClientesExtendido();
@@ -243,6 +334,10 @@ public class ReporteClienteController {
         }
 
         tablaClientes.setItems(FXCollections.observableArrayList(filtrados));
+        if (filtrados.isEmpty() && filtro != null && !"Todos".equals(filtro)) {
+            AlertaUtil.mostrarAlerta(Alert.AlertType.INFORMATION, "Sin resultados", null,
+                    "No se encontraron clientes que cumplan el criterio: " + filtro + ".");
+        }
         actualizarGraficoBarras(filtrados);
         actualizarGraficoTorta(filtrados);
         actualizarGraficoHistograma(filtrados);
