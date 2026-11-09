@@ -32,15 +32,29 @@ public class ModuloPrincipalReportesController {
         aplicarPermisos();
     }
 
+
     private void aplicarPermisos() {
         boolean esGerente = utilidades.PermisosUtil.esGerente();
+        boolean esRecepcionista = utilidades.PermisosUtil.esRecepcionista();
         boolean esEstilista = utilidades.PermisosUtil.esEstilista();
 
+        // Reporte de clientes: solo Gerente.
         btnReporteCliente.setDisable(!esGerente);
+
+        // Reporte de facturación: solo Gerente.
         btnReporteFacturacion.setDisable(!esGerente);
+
+        // Exportación general: solo Gerente.
         btnExportarTodoPower.setDisable(!esGerente);
-        btnListadoFacturas.setDisable(esEstilista);
+
+        // Listado de facturas: Gerente y Recepcionista.
+        btnListadoFacturas.setDisable(!esGerente && !esRecepcionista);
+        btnProductividad.setDisable(!esGerente);
+        btnRankingServicios.setDisable(!esGerente);
     }
+
+
+
 
     @FXML
     private void cargarSubModulo(ActionEvent event) {

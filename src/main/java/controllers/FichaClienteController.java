@@ -55,9 +55,9 @@ public class FichaClienteController {
      * RD1.9 Registrar visita: Estilista únicamente.
      */
     private void aplicarPermisos() {
-        btnModificar.setDisable(utilidades.PermisosUtil.esEstilista());
-        btnEliminar.setDisable(!utilidades.PermisosUtil.esGerente());
-        btnVerHistorial.setDisable(utilidades.PermisosUtil.esRecepcionista());
+        btnModificar.setDisable(utilidades.PermisosUtil.esEstilista() && utilidades.PermisosUtil.esEstilista() );
+        btnEliminar.setDisable(!utilidades.PermisosUtil.esGerente() && !utilidades.PermisosUtil.esRecepcionista() );
+
         btnRegistrarVisita.setDisable(!utilidades.PermisosUtil.esEstilista());
     }
 

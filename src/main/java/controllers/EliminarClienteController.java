@@ -49,14 +49,13 @@ public class EliminarClienteController implements Initializable {
     @FXML
     private void handleEliminarCliente() {
         if (clienteActual == null) {
-            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error", null,"Debe seleccionar un cliente antes de eliminar.");
+            AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error", null,"Debe seleccionar un cliente antes de descativar.");
             System.out.println("⚠️ No se seleccionó ningún cliente para DESACTIVAR.");
             return;
         }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmar Eliminación");
-        confirm.setHeaderText("¡ADVERTENCIA: Acción Irreversible!");
+        confirm.setTitle("Confirmar DESACTIVACION");
         confirm.setContentText("¿Está seguro que desea DESACTIVAR al cliente "
                 + clienteActual.getNombre() + " " + clienteActual.getApellido() + "?");
 
@@ -82,20 +81,20 @@ public class EliminarClienteController implements Initializable {
                 System.out.println("🧾 Mensaje de error: " + e.getMessage());
 
                 if (e.getMessage().contains("a foreign key constraint fails")) {
-                    AlertaUtil.mostrarAlerta(Alert.AlertType.WARNING, "Eliminación bloqueada",
+                    AlertaUtil.mostrarAlerta(Alert.AlertType.WARNING, "Descativar bloqueada",
                             null,"Este cliente tiene registros asociados. Elimine primero sus visitas, turnos o facturas.");
-                    System.out.println("🔒 Eliminación bloqueada por restricción de clave foránea.");
+                    System.out.println("🔒dESCATIVACION bloqueada por restricción de clave foránea.");
                 } else {
                     AlertaUtil.mostrarAlerta(Alert.AlertType.ERROR, "Error de Base de Datos",
-                            null,"Ocurrió un error al eliminar el cliente.");
+                            null,"Ocurrió un error al DESCATIVAR el cliente.");
                     System.out.println("⚠️ Error inesperado al eliminar cliente.");
                 }
             } finally {
                 cerrarVentana();
-                System.out.println("🔚 Ventana de eliminación cerrada.");
+                System.out.println("🔚 Ventana de DESACTIVACION cerrada.");
             }
         } else {
-            System.out.println("❎ Eliminación cancelada por el usuario.");
+            System.out.println("❎ DESACTIVACION cancelada por el usuario.");
         }
     }
 

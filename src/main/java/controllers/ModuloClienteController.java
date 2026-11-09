@@ -32,7 +32,7 @@ public class ModuloClienteController implements Initializable {
 
     private void aplicarPermisos() {
         btnAltaCliente.setDisable(utilidades.PermisosUtil.esEstilista());
-        btnListar.setDisable(!utilidades.PermisosUtil.esGerente());
+        btnListar.setDisable(!utilidades.PermisosUtil.esGerente() &&  !utilidades.PermisosUtil.esRecepcionista());
     }
 
     public void setStage(Stage stage) {

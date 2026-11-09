@@ -241,7 +241,10 @@ public class GestionDiariaController implements Initializable {
         cbEstilistaFiltro.setDisable(!esGerente);
     }
     private void actualizarEstadoBotones(Turno turno) {
-        if (!esGerente) {
+        boolean esRecepcionista = utilidades.PermisosUtil.esRecepcionista();
+
+        // Solo Gerente y Recepcionista pueden cambiar el estado.
+        if (!esGerente && !esRecepcionista) {
             btnFinalizar.setDisable(true);
             btnCancelar.setDisable(true);
             btnConfirmar.setDisable(true);
@@ -259,21 +262,37 @@ public class GestionDiariaController implements Initializable {
 
             Turno turnoFresco = turnoService.obtenerPorId(turno.getIdTurno());
             if (turnoFresco == null) {
-                turnoFresco = turno; // Fallback por seguridad
+                turnoFresco = turno;
             }
 
-            // Activación según lógica de transición clásica
-            btnFinalizar.setDisable(!turnoFresco.puedeCambiarA(EstadoTurno.FINALIZADO));
-            btnCancelar.setDisable(!turnoFresco.puedeCambiarA(EstadoTurno.CANCELADO));
-            btnConfirmar.setDisable(!turnoFresco.puedeCambiarA(EstadoTurno.CONFIRMADO));
+            // Se mantienen las validaciones de las transiciones permitidas.
+            btnFinalizar.setDisable(
+                    !turnoFresco.puedeCambiarA(EstadoTurno.FINALIZADO)
+            );
+
+            btnCancelar.setDisable(
+                    !turnoFresco.puedeCambiarA(EstadoTurno.CANCELADO)
+            );
+
+            btnConfirmar.setDisable(
+                    !turnoFresco.puedeCambiarA(EstadoTurno.CONFIRMADO)
+            );
 
         } catch (SQLException e) {
 
-            log.error("Error de BD al actualizar estado de botones para turno {}", turno.getIdTurno(), e);
+            log.error(
+                    "Error de BD al actualizar estado de botones para turno {}",
+                    turno.getIdTurno(),
+                    e
+            );
+
         } catch (RuntimeException e) {
 
-            log.error("Excepción inesperada al evaluar estado de botones para turno {}", turno.getIdTurno(), e);
+            log.error(
+                    "Excepción inesperada al evaluar estado de botones para turno {}",
+                    turno.getIdTurno(),
+                    e
+            );
         }
     }
-
 }

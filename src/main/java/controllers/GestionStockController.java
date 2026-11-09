@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import service.CompraStockService;
 import service.ConsumoProductoService;
 import service.ProductoStockService;
@@ -52,10 +53,24 @@ public class GestionStockController {
     @FXML private javafx.scene.layout.VBox vistaConsumo;
     @FXML private javafx.scene.layout.VBox vistaProveedores;
     @FXML private javafx.scene.layout.VBox vistaCompras;
+    @FXML
+    private Button btnProductos;
+
+    @FXML
+    private Button btnConsumo;
+
+    @FXML
+    private Button btnProveedores;
+
+    @FXML
+    private Button btnCompras;
+
+
 
     @FXML
     private void initialize(){
         configurarTablas();
+        aplicarPermisos();
         chkProductoActivo.setSelected(true);
         tvProductos.getSelectionModel().selectedItemProperty().addListener((obs,old,v)->seleccionarProducto(v));
         tvProveedores.getSelectionModel().selectedItemProperty().addListener((obs,old,v)->seleccionarProveedor(v));
@@ -63,7 +78,27 @@ public class GestionStockController {
         cargarTodo();
         mostrarProductos();
     }
+    private void aplicarPermisos() {
+        boolean esGerente = utilidades.PermisosUtil.esGerente();
+        boolean esEstilista = utilidades.PermisosUtil.esEstilista();
 
+        // Productos: Gerente y Estilista pueden consultar el stock.
+        btnProductos.setDisable(!esGerente && !esEstilista);
+
+        // Consumo: Gerente y Estilista pueden registrar consumos.
+        btnConsumo.setDisable(!esGerente && !esEstilista);
+
+        // Proveedores y compras: solo Gerente.
+        btnProveedores.setDisable(!esGerente);
+        btnCompras.setDisable(!esGerente);
+
+        // Administración de productos: solo Gerente.
+        btnProductoGuardar.setDisable(!esGerente);
+        btnProductoEstado.setDisable(!esGerente);
+
+        // Administración de proveedores: solo Gerente.
+        btnProveedorGuardar.setDisable(!esGerente);
+    }
     private void configurarTablas(){
         colProdNombre.setCellValueFactory(c->new SimpleStringProperty(c.getValue().getNombre()));
         colProdDescripcion.setCellValueFactory(c->new SimpleStringProperty(c.getValue().getDescripcion()==null?"":c.getValue().getDescripcion()));

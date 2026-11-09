@@ -28,6 +28,7 @@ public class PanelPrincipalController {
     @FXML private Button btnGestionTurnos;
     @FXML private Button btnReporteCliente;
     @FXML private Button btnGestionProfesionales;
+    @FXML private Button btnEspecialidades;
     @FXML private Button btnGestionStock;
 
     private Usuario usuarioLogueado;
@@ -40,12 +41,26 @@ public class PanelPrincipalController {
 
     private void aplicarPermisos() {
         boolean esGerente = utilidades.PermisosUtil.esGerente();
+        boolean esRecepcionista = utilidades.PermisosUtil.esRecepcionista();
         boolean esEstilista = utilidades.PermisosUtil.esEstilista();
 
+        // Clientes: permitido para los tres perfiles.
         btnGestionClientes.setDisable(false);
+
+        // Turnos: permitido para Gerente y Recepcionista.
         btnGestionTurnos.setDisable(esEstilista);
-        btnReporteCliente.setDisable(!esGerente);
+
+        // Reportes generales: solo Gerente.
+        btnReporteCliente.setDisable(esEstilista);
+
+        // Gestión de profesionales: solo Gerente.
         btnGestionProfesionales.setDisable(!esGerente);
+
+        // Servicios: solo Gerente.
+        btnEspecialidades.setDisable(!esGerente);
+
+        // Productos y Stock: solo Gerente.
+        btnGestionStock.setDisable(!esGerente && !esEstilista);
     }
 
 
