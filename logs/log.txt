@@ -1,0 +1,12 @@
+[2026-10-07 22:22:17.731] [INFO] [Thread-26] [io.qase.commons.reporters.CoreReporter] Starting test run
+[2026-10-07 22:22:19.992] [INFO] [Thread-26] [io.qase.commons.reporters.TestopsReporter] Test run 1 started
+[2026-10-07 22:22:22.209] [INFO] [Thread-26] [io.qase.commons.reporters.CoreReporter] Uploading results
+[2026-10-07 22:22:22.211] [INFO] [Thread-26] [io.qase.commons.reporters.CoreReporter] Completing test run
+[2026-10-07 22:22:22.796] [INFO] [Thread-26] [io.qase.commons.client.ApiClientV1] Test run link: https://app.qase.io/run/PELUQPRO/dashboard/1
+[2026-10-07 22:22:22.796] [INFO] [Thread-26] [io.qase.commons.reporters.TestopsReporter] Test run 1 completed
+[2026-10-08 12:17:03.965] [INFO] [Thread-30] [io.qase.commons.reporters.CoreReporter] Starting test run
+[2026-10-08 12:17:06.203] [INFO] [Thread-30] [io.qase.commons.reporters.TestopsReporter] Test run 2 started
+[2026-10-08 12:17:08.145] [INFO] [Thread-30] [io.qase.commons.reporters.CoreReporter] Uploading results
+[2026-10-08 12:17:08.146] [INFO] [Thread-30] [io.qase.commons.reporters.CoreReporter] Completing test run
+[2026-10-08 12:17:08.475] [INFO] [Thread-30] [io.qase.commons.client.ApiClientV1] Test run link: https://app.qase.io/run/PELUQPRO/dashboard/2
+[2026-10-08 12:17:08.475] [INFO] [Thread-30] [io.qase.commons.reporters.TestopsReporter] Test run 2 completed
